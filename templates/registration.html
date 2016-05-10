@@ -7,32 +7,48 @@
 
     <div>
         <label>
-            Email
+            Username:
+            <input type="text" name="username">
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Email:
             <input type="email" name="email">
         </label>
     </div>
 
     <div>
         <label>
-            Password
+            Password:
             <input type="password" name="password">
         </label>
     </div>
 
     <div>
         <label>
-            First Name
+            First Name:
             <input type="text" name="fname">
         </label>
     </div>
 
     <div>
         <label>
-            Zipcode
-            <input type="text" name="zipcode">
+            Last Name:
+            <input type="text" name="lname">
+        </label>
+    </div>
+
+    <div>
+        <label>
+            Phone Number (Optional):
+            <input type="text" name="phone">
         </label>
     </div>
 
     <div>
         <input type="submit" value="Register">
     </div>
+
+{% endblock %}

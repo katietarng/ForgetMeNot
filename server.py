@@ -18,7 +18,15 @@ app.jinja_env.undefined = StrictUndefined
 def index():
     """Homepage with login and sign-up functionality."""
 
+    user_id = session.get('user_id', None)
+
+    if user_id:
+        user = User.query.get(user_id)
+        name = user.fname
+        return render_template("profile.html", name=name)
+
     return render_template("homepage.html")
+
 
 @app.route('/register')
 def register_form():
@@ -26,11 +34,37 @@ def register_form():
 
     return render_template("registration.html")
 
+
 @app.route('/register', methods=['POST'])
 def process_new_user():
     """Process new user from registration form."""
 
-    
+    username = request.form["username"]
+    email = request.form["email"]
+    password = request.form["password"]
+    first_name = request.form["fname"]
+    last_name = request.form["lname"]
+    phone = request.form["phone"]
+
+    user = db.session.query(User).filter_by(username=username).first()
+
+    if user:
+        flash("This username is taken.")
+        return render_template("registration.html")
+    else:
+        new_user = User(username=username,
+                        email=email,
+                        password=password,
+                        fname=first_name,
+                        lname=last_name,
+                        phone=phone)
+
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("You have successfully signed up for an account!")
+        return redirect('/profile/{}'.format(new_user.username))
+
 
 @app.route('/login', methods=['POST'])
 def process_login():
@@ -39,10 +73,11 @@ def process_login():
     email = request.form["email"]
     password = request.form["password"]
 
-    user = User.query.filter_by(email=email).one()
+    #Want to use .first() so that it can return None type object
+    user = User.query.filter_by(email=email).first()
 
     if not user:
-        flash("No such email. Please sign up or try again.")
+        flash("This email does not exist. Please sign up or try again.")
         return redirect("/")
 
     if user.password != password:
@@ -52,9 +87,26 @@ def process_login():
     session["user_id"] = user.user_id
 
     flash("You are now logged in.")
-    return redirect("/profile/{}".format(user.user_id))
+    return redirect("/profile/{}".format(user.username))
 
 
+@app.route('/logout')
+def logout():
+    """Log out."""
+
+    del session["user_id"]
+    flash("You have successfully logged out.")
+    return redirect("/")
+
+
+@app.route('/profile/<username>')
+def show_user_profile(username):
+    """Show user profile."""
+
+    user = db.session.query(User).filter_by(username=username).one()
+    name = user.fname
+
+    return render_template("profile.html", name=name)
 
 
 if __name__ == "__main__":
@@ -62,7 +114,7 @@ if __name__ == "__main__":
     # that we invoke the DebugToolbarExtension
     app.debug = True
 
-    # connect_to_db(app)
+    connect_to_db(app)
 
     # Use the DebugToolbar
     DebugToolbarExtension(app)

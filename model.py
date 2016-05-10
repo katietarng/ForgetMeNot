@@ -10,7 +10,8 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(30), nullable=False, unique=True)
     email = db.Column(db.String(65), nullable=False, unique=True)
     password = db.Column(db.String(65), nullable=False)
     fname = db.Column(db.String(30), nullable=False)
@@ -20,12 +21,13 @@ class User(db.Model):
     def __repr__(self):
         """Print user information."""
 
-        return "<User user_id={} email={}, password={}, fname={}, lname={}, phone={}>".format(self.user_id,
-                                                                                              self.email,
-                                                                                              self.password,
-                                                                                              self.fname,
-                                                                                              self.lname,
-                                                                                              self.phone)
+        return "<user_id={} username={} email={}, password={}, fname={}, lname={}, phone={}>".format(self.user_id,
+                                                                                                     self.username,
+                                                                                                     self.email,
+                                                                                                     self.password,
+                                                                                                     self.fname,
+                                                                                                     self.lname,
+                                                                                                     self.phone)
 
 
 class Ingredient(db.Model):
@@ -57,7 +59,7 @@ class UsedIngredient(db.Model):
     __tablename__ = "used_ingredients"
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    used_id = db.Column(db.Integer, db.ForeignKey('used_recipes.used_id'))
+    used_api_id = db.Column(db.Integer, db.ForeignKey('used_recipes.used_api_id'))
     name = db.Column(db.String(70), nullable=False, unique=True)
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)
