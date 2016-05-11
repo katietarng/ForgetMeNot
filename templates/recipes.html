@@ -1,8 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Recipes</h1>
+    <h1>Suggested Recipes</h1>
+    
+    {% if recipes %} 
+        {% for recipe in recipes %}
+            <div class="recipe">
+                <span class="recipeid" hidden>{{ recipe[0] }}</span>
+                <span class="recipeimage">
+                    <img src="{{ recipe[1] }}">
+                </span>
+                <span class="recipename">{{ recipe[2] }}</span>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h4>There are no suggested recipes as you have no ingredients.</h4>
+          
 
-    {{% if recipes %}}
-        {{% for }}
-
-{$ endblock %}
+{% endblock %}

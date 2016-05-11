@@ -18,11 +18,12 @@ def recipe_request(ingredients):
             "fillIngredients": True,  # Adds information about used ingredients
             "ingredients": ingredients,  # List of ingredients as a string
             "number": 10,  # Maximal number of recipes to return
-            "ranking": 2  # Minimizes missing ingredients
+            "ranking": 1  # Minimizes missing ingredients
         }
     )
 
     responses = request.body  # Returns a list of dictionaries that are recipes
+    recipes = []
 
     for response in responses:
         recipe_id = response['id']
@@ -35,9 +36,10 @@ def recipe_request(ingredients):
         # #Iterate through ingredients list and output the name of each ingredient
         # ingredients = [ingredient['name'] for ingredient in ingredients]
 
-        recipes = {recipe_id: (image_url, title)}
+        recipe = (recipe_id, image_url, title)
+        recipes.append(recipe)
 
-        return recipes
+    return recipes
 
 
 def recipe_info(recipe_id):

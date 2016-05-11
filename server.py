@@ -119,11 +119,10 @@ def show_user_profile(username):
 def suggest_recipes():
     """Show user a list of suggested recipes."""
 
-    ingredients = request.form["ingredient"]
-    #A list of dictionaries
-    recipes = recipe_request(ingredients)
+    ingredients = request.form.getlist("ingredient")
+    ingredients = ",".join(ingredients)  # Creating a comma separated string (required for API argument)
 
-    print recipes
+    recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name)
 
     return render_template("recipes.html", recipes=recipes)
 
