@@ -4,6 +4,8 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 from model import *
+from datetime import datetime
+from generaterecipes import recipe_request
 
 
 app = Flask(__name__)
@@ -23,7 +25,9 @@ def index():
     if user_id:
         user = User.query.get(user_id)
         name = user.fname
-        return render_template("profile.html", name=name)
+        date = datetime.now()
+        date = date.strftime("%B %d, %Y")
+        return render_template("profile.html", name=name, date=date)
 
     return render_template("homepage.html")
 
@@ -105,8 +109,23 @@ def show_user_profile(username):
 
     user = db.session.query(User).filter_by(username=username).one()
     name = user.fname
+    date = datetime.now()
+    date = date.strftime("%B %d, %Y")
 
-    return render_template("profile.html", name=name)
+    return render_template("profile.html", name=name, date=date)
+
+
+@app.route('/recipes', methods=['POST'])
+def suggest_recipes():
+    """Show user a list of suggested recipes."""
+
+    ingredients = request.form["ingredient"]
+    #A list of dictionaries
+    recipes = recipe_request(ingredients)
+
+    print recipes
+
+    return render_template("recipes.html", recipes=recipes)
 
 
 if __name__ == "__main__":

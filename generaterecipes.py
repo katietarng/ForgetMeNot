@@ -26,13 +26,16 @@ def recipe_request(ingredients):
 
     for response in responses:
         recipe_id = response['id']
-        image = response['image']
+        image_url = response['image']
         title = response['title']
-        ingredients = response['usedIngredients'] + response['missedIngredients']
 
-        ingredients = [ingredient['name'] for ingredient in ingredients]
+        # #Combine all ingredients needed for this recipe
+        # ingredients = response['usedIngredients'] + response['missedIngredients']
 
-        recipes = {title: ingredients}
+        # #Iterate through ingredients list and output the name of each ingredient
+        # ingredients = [ingredient['name'] for ingredient in ingredients]
+
+        recipes = {recipe_id: (image_url, title)}
 
         return recipes
 

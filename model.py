@@ -16,7 +16,7 @@ class User(db.Model):
     password = db.Column(db.String(65), nullable=False)
     fname = db.Column(db.String(30), nullable=False)
     lname = db.Column(db.String(30), nullable=False)
-    phone = db.Column(db.String(20), nullable=True)
+    phone = db.Column(db.String(20), nullable=False)
 
     def __repr__(self):
         """Print user information."""

@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
     
-    <h1>Hello {{ name }}!</h1>
+    <h1>Hello {{ name }}! Today's date is {{ date }}.</h1>
 
+    <form action="/recipes" method="POST">
+        <label>Ingredients:
+            <input type="text" name="ingredient">
+        </label>
+        <input type="submit">
+    </form>
+    
 
-
-
-
-
-
-
+    <a href="/recipes">Suggested Recipes</a><br>
     <a href="/logout">Logout</a>
+
 {% endblock %}
