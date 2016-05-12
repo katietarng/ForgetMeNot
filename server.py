@@ -66,6 +66,8 @@ def process_new_user():
         db.session.add(new_user)
         db.session.commit()
 
+        session["user_id"] = new_user.user_id
+
         flash("You have successfully signed up for an account!")
         return redirect('/profile/{}'.format(new_user.username))
 
@@ -144,23 +146,26 @@ def add_new_ingredients():
             amount = ingredient[1]
             unit = ingredient[2]
 
-            current_ingredient = db.session.query(Ingredient).filter_by(name=name).first()
+            current_ingredient = db.session.query(Ingredient).filter_by(user_id=user_id, name=name).first()
 
             if current_ingredient:
-                # TO DO: See if unit is updated in the row
-                db.session.query(Ingredient).filter_by(name=name).update({"amount": amount, "unit": unit})
+                update = db.session.query(Ingredient).filter_by(name=name).update({Ingredient.amount: amount, Ingredient.unit: unit})
             else:
-                new_ingredient = Ingredient(name=ingredient[0],
+                new_ingredient = Ingredient(user_id=user_id,
+                                            name=ingredient[0],
                                             amount=ingredient[1],
                                             unit=ingredient[2],
                                             input_date=input_date)
 
                 db.session.add(new_ingredient)
-                db.session.commit()
+
+            db.session.commit()
 
         flash("You have successfully added the ingredients.")
 
     return redirect("/profile/{}".format(user.username))
+
+    # orange, eggs, sugar (5,2,1) (cup,quart,cup)
 
 # @app.route('/recipes', methods=['POST'])
 # def suggest_recipes():

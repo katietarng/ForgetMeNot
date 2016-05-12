@@ -36,19 +36,24 @@ class Ingredient(db.Model):
     __tablename__ = "ingredients"
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     name = db.Column(db.String(70), nullable=False, unique=True)
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)  # Units of measurement (ounces,liters,etc.)
     input_date = db.Column(db.DateTime, nullable=False)
 
+    user = db.relationship("User",
+                           backref=db.backref("ingredients", order_by=ingredient_id))
+
     def __repr__(self):
         """Print ingredients in fridge or pantry."""
 
-        return "<Ingredient ingredient_id={}, name={}, amount={}, unit={}, input_date={}>".format(self.ingredient_id,
-                                                                                                  self.name,
-                                                                                                  self.amount,
-                                                                                                  self.unit,
-                                                                                                  self.input_date)
+        return "<Ingredient user_id={} ingredient_id={}, name={}, amount={}, unit={}, input_date={}>".format(self.user_id,
+                                                                                                             self.ingredient_id,
+                                                                                                             self.name,
+                                                                                                             self.amount,
+                                                                                                             self.unit,
+                                                                                                             self.input_date)
 
 
 class UsedIngredient(db.Model):
@@ -57,11 +62,15 @@ class UsedIngredient(db.Model):
     __tablename__ = "used_ingredients"
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     used_api_id = db.Column(db.Integer, db.ForeignKey('used_recipes.used_api_id'))
     name = db.Column(db.String(70), nullable=False, unique=True)
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)
     frequency = db.Column(db.Integer, nullable=False)  # Number of times ingredient has been used in recipes
+
+    user = db.relationship("User",
+                           backref=db.backref("used_ingredients", order_by=ingredient_id))
 
     used_recipe = db.relationship("UsedRecipe",
                                   backref=db.backref("used_ingredients", order_by=ingredient_id))
@@ -69,12 +78,13 @@ class UsedIngredient(db.Model):
     def __repr__(self):
         """Print ingredients used in recipe."""
 
-        return "<Used Ingredient ingredient_id={}, used_id = {}, name={}, amount={}, unit={}, frequency={}>".format(self.ingredient_id,
-                                                                                                                    self.used_id,
-                                                                                                                    self.name,
-                                                                                                                    self.amount,
-                                                                                                                    self.unit,
-                                                                                                                    self.frequency)
+        return "<Used Ingredient user_id={} ingredient_id={}, used_id = {}, name={}, amount={}, unit={}, frequency={}>".format(self.user_id,
+                                                                                                                               self.ingredient_id,
+                                                                                                                               self.used_id,
+                                                                                                                               self.name,
+                                                                                                                               self.amount,
+                                                                                                                               self.unit,
+                                                                                                                               self.frequency)
 
 
 class UsedRecipe(db.Model):
@@ -83,7 +93,11 @@ class UsedRecipe(db.Model):
     __tablename__ = "used_recipes"
 
     used_api_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
+
+    user = db.relationship("User",
+                           backref=db.backref("used_recipes", order_by=used_api_id))
 
     recipe = db.relationship("Recipe",
                              backref=db.backref("used_recipes", order_by=used_api_id))
@@ -95,14 +109,18 @@ class SavedRecipe(db.Model):
     __tablename__ = "saved_recipes"
 
     saved_api_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
+
+    user = db.relationship("User",
+                           backref=db.backref("saved_recipes", order_by=saved_api_id))
 
     recipe = db.relationship("Recipe",
                              backref=db.backref("saved_recipes", order_by=saved_api_id))
 
 
 class Recipe(db.Model):
-    """Recipe that has been saved and/or used."""
+    """Recipe that has been saved, used, or favorited."""
 
     __tablename__ = "recipes"
 
@@ -119,11 +137,12 @@ class Recipe(db.Model):
     def __repr__(self):
         """Print user information."""
 
-        return "<Recipe recipe_id={} title={}, favorited={}, image_url={}> source={}".format(self.recipe_id,
-                                                                                             self.title,
-                                                                                             self.favorited,
-                                                                                             self.image_url,
-                                                                                             self.source_url)
+        return "<Recipe user_id={} recipe_id={} title={}, favorited={}, image_url={}> source={}".format(self.user_id,
+                                                                                                        self.recipe_id,
+                                                                                                        self.title,
+                                                                                                        self.favorited,
+                                                                                                        self.image_url,
+                                                                                                        self.source_url)
 
 
 # class Grocery(db.Model):
