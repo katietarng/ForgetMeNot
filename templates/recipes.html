@@ -9,11 +9,12 @@
                 <span class="recipeimage">
                     <img src="{{ recipe[1] }}">
                 </span>
-                <span class="recipename">{{ recipe[2] }}</span>
+                <span class="recipename"><a href="{{ recipe[3]}}" target="_blank">{{ recipe[2] }}</a></span>
             </div>
         {% endfor %}
     {% else %}
         <h4>There are no suggested recipes as you have no ingredients.</h4>
-          
+    {% endif %}
+    
 
 {% endblock %}

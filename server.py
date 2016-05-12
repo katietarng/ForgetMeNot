@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 from model import *
 from datetime import datetime
-from generaterecipes import recipe_request
+from generaterecipes import recipe_request, recipe_info
 
 
 app = Flask(__name__)
@@ -122,9 +122,28 @@ def suggest_recipes():
     ingredients = request.form.getlist("ingredient")
     ingredients = ",".join(ingredients)  # Creating a comma separated string (required for API argument)
 
-    recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name)
+    recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name, source, ingredients)
 
     return render_template("recipes.html", recipes=recipes)
+
+
+@app.route('/recipe-source.json')
+def get_source_urls():
+    """Get source urls for each recipe."""
+
+    recipe_ids = request.form.getlist["recipe_id"]  # Returns a list of recipe IDs
+
+    sources = {}
+
+    #Iterate through each recipe id and grab the s
+    for recipe_id in recipe_ids:
+        info = recipe_info(recipe_id)  # Returns a tuple
+        id = info[0]
+        source = info[1]
+
+        sources[id] = source
+
+    return jsonify(sources)
 
 
 if __name__ == "__main__":

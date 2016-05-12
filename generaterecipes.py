@@ -30,20 +30,18 @@ def recipe_request(ingredients):
         image_url = response['image']
         title = response['title']
 
-        # #Combine all ingredients needed for this recipe
-        # ingredients = response['usedIngredients'] + response['missedIngredients']
+        info = recipe_info(recipe_id)
+        source = info[0]
+        ingredients = info[1]
 
-        # #Iterate through ingredients list and output the name of each ingredient
-        # ingredients = [ingredient['name'] for ingredient in ingredients]
-
-        recipe = (recipe_id, image_url, title)
+        recipe = (recipe_id, image_url, title, source, ingredients)
         recipes.append(recipe)
 
     return recipes
 
 
 def recipe_info(recipe_id):
-    """Return individual recipe information."""
+    """Return recipe information for a single recipe."""
 
     url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/{}/information".format(recipe_id)
 
@@ -54,15 +52,13 @@ def recipe_info(recipe_id):
         }
     )
 
-    response = request.body  # Returns one dictionary with a list of dictionary ingredients
+    response = request.body  # Returns a single response!!!
 
-    #Need to link source URL from response body
+    source = response.get("sourceUrl")
+    ingredients = response.get("extendedIngredients")
 
-    ingredients = response.get('extendedIngredients')
-
-    # List of ingredients as tuples
     ingredients = [(ingredient['name'], ingredient['amount'], ingredient['unit']) for ingredient in ingredients]
 
-    return ingredients
+    recipe = (source, ingredients)
 
-
+    return recipe
