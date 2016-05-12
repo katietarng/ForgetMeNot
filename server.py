@@ -1,7 +1,7 @@
 import os
 
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from model import *
 from datetime import datetime
@@ -112,36 +112,65 @@ def show_user_profile(username):
     date = datetime.now()
     date = date.strftime("%B %d, %Y")
 
-    return render_template("profile.html", name=name, date=date)
+    return render_template("profile.html",
+                           name=name,
+                           date=date
+                           )
 
 
-@app.route('/recipes', methods=['POST'])
-def suggest_recipes():
-    """Show user a list of suggested recipes."""
+@app.route('/add-ingredients', methods=["POST"])
+def add_new_ingredients():
+    """Add new ingredients to database."""
 
+    #Get user ID to query the users table - need the user object to get the username attribute
+    user_id = session.get('user_id', None)
+    user = User.query.get(user_id)
+
+    #Get the ingredients, amounts, and units from the form in the profile html
     ingredients = request.form.getlist("ingredient", None)
     amounts = request.form.getlist("amount", None)
     units = request.form.getlist("unit", None)
-    amounts = map(float, amounts)
 
+    # Map function applies the int() function to the amounts list
+    # which changes the amounts from a list of strings to a list of integers
+    amounts = map(float, amounts)
     ingredients = zip(ingredients, amounts, units)
 
-    # if ingredients:
-    #     date = datetime.now()
-    #     for ingredient in ingredients: 
-    #         new_ingredient = Ingredient(name=ingredient[0],
-    #                                     )
-        # Map function applies the int() function to the amounts list
-        # which changes the amounts from a list of strings to a list of integers
+    if ingredients:
+        input_date = datetime.now()
 
+        for ingredient in ingredients:
+            name = ingredient[0]
+            amount = ingredient[1]
+            unit = ingredient[2]
 
+            current_ingredient = db.session.query(Ingredient).filter_by(name=name).first()
 
+            if current_ingredient:
+                # TO DO: See if unit is updated in the row
+                db.session.query(Ingredient).filter_by(name=name).update({"amount": amount, "unit": unit})
+            else:
+                new_ingredient = Ingredient(name=ingredient[0],
+                                            amount=ingredient[1],
+                                            unit=ingredient[2],
+                                            input_date=input_date)
 
-    ingredients = ",".join(ingredients)  # Creating a comma separated string (required for API argument)
+                db.session.add(new_ingredient)
+                db.session.commit()
 
-    recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name, source, ingredients)
+        flash("You have successfully added the ingredients.")
 
-    return render_template("recipes.html", recipes=recipes)
+    return redirect("/profile/{}".format(user.username))
+
+# @app.route('/recipes', methods=['POST'])
+# def suggest_recipes():
+#     """Show user a list of suggested recipes."""
+
+#     ingredients = ",".join(ingredients)  # Creating a comma separated string (required for API argument)
+
+#     recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name, source, ingredients)
+
+#     return render_template("recipes.html", recipes=recipes)
 
 
 
