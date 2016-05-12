@@ -119,31 +119,30 @@ def show_user_profile(username):
 def suggest_recipes():
     """Show user a list of suggested recipes."""
 
-    ingredients = request.form.getlist("ingredient")
+    ingredients = request.form.getlist("ingredient", None)
+    amounts = request.form.getlist("amount", None)
+    units = request.form.getlist("unit", None)
+    amounts = map(float, amounts)
+
+    ingredients = zip(ingredients, amounts, units)
+
+    # if ingredients:
+    #     date = datetime.now()
+    #     for ingredient in ingredients: 
+    #         new_ingredient = Ingredient(name=ingredient[0],
+    #                                     )
+        # Map function applies the int() function to the amounts list
+        # which changes the amounts from a list of strings to a list of integers
+
+
+
+
     ingredients = ",".join(ingredients)  # Creating a comma separated string (required for API argument)
 
     recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name, source, ingredients)
 
     return render_template("recipes.html", recipes=recipes)
 
-
-@app.route('/recipe-source.json')
-def get_source_urls():
-    """Get source urls for each recipe."""
-
-    recipe_ids = request.form.getlist["recipe_id"]  # Returns a list of recipe IDs
-
-    sources = {}
-
-    #Iterate through each recipe id and grab the s
-    for recipe_id in recipe_ids:
-        info = recipe_info(recipe_id)  # Returns a tuple
-        id = info[0]
-        source = info[1]
-
-        sources[id] = source
-
-    return jsonify(sources)
 
 
 if __name__ == "__main__":

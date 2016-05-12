@@ -56,7 +56,6 @@ def recipe_info(recipe_id):
 
     source = response.get("sourceUrl")
     ingredients = response.get("extendedIngredients")
-
     ingredients = [(ingredient['name'], ingredient['amount'], ingredient['unit']) for ingredient in ingredients]
 
     recipe = (source, ingredients)

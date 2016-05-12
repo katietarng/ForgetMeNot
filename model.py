@@ -40,17 +40,15 @@ class Ingredient(db.Model):
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)  # Units of measurement (ounces,liters,etc.)
     input_date = db.Column(db.DateTime, nullable=False)
-    expiration_date = db.Column(db.DateTime, nullable=True)
 
     def __repr__(self):
         """Print ingredients in fridge or pantry."""
 
-        return "<Ingredient ingredient_id={}, name={}, amount={}, unit={}, input_date={}, expiration_date={}>".format(self.ingredient_id,
-                                                                                                                      self.name,
-                                                                                                                      self.amount,
-                                                                                                                      self.unit,
-                                                                                                                      self.input_date,
-                                                                                                                      self.expiration_date)
+        return "<Ingredient ingredient_id={}, name={}, amount={}, unit={}, input_date={}>".format(self.ingredient_id,
+                                                                                                  self.name,
+                                                                                                  self.amount,
+                                                                                                  self.unit,
+                                                                                                  self.input_date)
 
 
 class UsedIngredient(db.Model):
