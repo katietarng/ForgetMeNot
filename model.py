@@ -63,7 +63,7 @@ class UsedIngredient(db.Model):
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    used_api_id = db.Column(db.Integer, db.ForeignKey('used_recipes.used_api_id'))
+    used_recipe_id = db.Column(db.Integer, db.ForeignKey('used_recipes.used_recipe_id'))
     name = db.Column(db.String(70), nullable=False, unique=True)
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)
@@ -92,31 +92,47 @@ class UsedRecipe(db.Model):
 
     __tablename__ = "used_recipes"
 
-    used_api_id = db.Column(db.Integer, primary_key=True)
+    used_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
 
     user = db.relationship("User",
-                           backref=db.backref("used_recipes", order_by=used_api_id))
+                           backref=db.backref("used_recipes", order_by=used_recipe_id))
 
     recipe = db.relationship("Recipe",
-                             backref=db.backref("used_recipes", order_by=used_api_id))
+                             backref=db.backref("used_recipes", order_by=used_recipe_id))
 
 
-class SavedRecipe(db.Model):
+class BookmarkedRecipe(db.Model):
     """Recipe that has been saved to cook later."""
 
-    __tablename__ = "saved_recipes"
+    __tablename__ = "bookmarked_recipes"
 
-    saved_api_id = db.Column(db.Integer, primary_key=True)
+    bookmarked_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
 
     user = db.relationship("User",
-                           backref=db.backref("saved_recipes", order_by=saved_api_id))
+                           backref=db.backref("saved_recipes", order_by=bookmarked_recipe_id))
 
     recipe = db.relationship("Recipe",
-                             backref=db.backref("saved_recipes", order_by=saved_api_id))
+                             backref=db.backref("saved_recipes", order_by=bookmarked_recipe_id))
+
+
+class FavoriteRecipe(db.Model):
+    """Recipes that have been favorited have been cooked."""
+
+    __tablename__ = "favorite_recipes"
+
+    favorite_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
+
+    user = db.relationship("User",
+                           backref=db.backref("favorite_recipes", order_by=favorite_recipe_id))
+
+    recipe = db.relationship("Recipe",
+                             backref=db.backref("favorite_recipes", order_by=favorite_recipe_id))
 
 
 class Recipe(db.Model):
@@ -124,10 +140,9 @@ class Recipe(db.Model):
 
     __tablename__ = "recipes"
 
-    recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    recipe_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
     title = db.Column(db.String(70), nullable=False, unique=True)
-    favorited = db.Column(db.Boolean, nullable=True)
     image_url = db.Column(db.String(200), nullable=False)
     source_url = db.Column(db.String(200), nullable=False)
 
@@ -137,12 +152,11 @@ class Recipe(db.Model):
     def __repr__(self):
         """Print user information."""
 
-        return "<Recipe user_id={} recipe_id={} title={}, favorited={}, image_url={}> source={}".format(self.user_id,
-                                                                                                        self.recipe_id,
-                                                                                                        self.title,
-                                                                                                        self.favorited,
-                                                                                                        self.image_url,
-                                                                                                        self.source_url)
+        return "<Recipe user_id={} recipe_id={} title={}, image_url={} source={}>".format(self.user_id,
+                                                                                          self.recipe_id,
+                                                                                          self.title,
+                                                                                          self.image_url,
+                                                                                          self.source_url)
 
 
 # class Grocery(db.Model):

@@ -1,20 +1,29 @@
 {% extends 'base.html' %}
+
 {% block content %}
     <h1>Suggested Recipes</h1>
-    
+
     {% if recipes %} 
         {% for recipe in recipes %}
-            <div class="recipe">
-                <span class="recipeid" hidden>{{ recipe[0] }}</span>
+            <div class="recipe" id="{{ recipe[0]}}">
                 <span class="recipeimage">
                     <img src="{{ recipe[1] }}">
                 </span>
                 <span class="recipename"><a href="{{ recipe[3]}}" target="_blank">{{ recipe[2] }}</a></span>
+                <br>
+                <button type="button" class="favorites" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Favorite</button>
+                <button type="button" class="bookmarks" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Bookmark</button>
+                <button type="button" class="cook" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Cook</button>
+                <br>
             </div>
+            <br>
         {% endfor %}
     {% else %}
         <h4>There are no suggested recipes as you have no ingredients.</h4>
     {% endif %}
+
     
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/static/js/recipes.js"></script>
 
 {% endblock %}

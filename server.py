@@ -1,7 +1,7 @@
 import os
 
 from jinja2 import StrictUndefined
-from flask import Flask, render_template, request, flash, redirect, session, url_for
+from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from model import *
 from datetime import datetime
@@ -24,10 +24,14 @@ def index():
 
     if user_id:
         user = User.query.get(user_id)
+        current_ingredients = db.session.query(Ingredient.name, Ingredient.amount, Ingredient.unit).filter_by(user_id=user_id).all()
         name = user.fname
         date = datetime.now()
         date = date.strftime("%B %d, %Y")
-        return render_template("profile.html", name=name, date=date)
+        return render_template("profile.html",
+                               name=name,
+                               date=date,
+                               current_ingredients=current_ingredients)
 
     return render_template("homepage.html")
 
@@ -110,13 +114,15 @@ def show_user_profile(username):
     """Show user profile."""
 
     user = db.session.query(User).filter_by(username=username).one()
+    current_ingredients = db.session.query(Ingredient.name, Ingredient.amount, Ingredient.unit).filter_by(user_id=user.user_id).all()
     name = user.fname
     date = datetime.now()
     date = date.strftime("%B %d, %Y")
 
     return render_template("profile.html",
                            name=name,
-                           date=date
+                           date=date,
+                           current_ingredients=current_ingredients
                            )
 
 
@@ -139,7 +145,7 @@ def add_new_ingredients():
     ingredients = zip(ingredients, amounts, units)
 
     if ingredients:
-        input_date = datetime.now()
+        input_date = datetime.utcnow()
 
         for ingredient in ingredients:
             name = ingredient[0]
@@ -149,7 +155,8 @@ def add_new_ingredients():
             current_ingredient = db.session.query(Ingredient).filter_by(user_id=user_id, name=name).first()
 
             if current_ingredient:
-                update = db.session.query(Ingredient).filter_by(name=name).update({Ingredient.amount: amount, Ingredient.unit: unit})
+                amount += current_ingredient.amount
+                db.session.query(Ingredient).filter_by(user_id=user_id, name=name).update({Ingredient.amount: amount, Ingredient.unit: unit})
             else:
                 new_ingredient = Ingredient(user_id=user_id,
                                             name=ingredient[0],
@@ -165,17 +172,58 @@ def add_new_ingredients():
 
     return redirect("/profile/{}".format(user.username))
 
-    # orange, eggs, sugar (5,2,1) (cup,quart,cup)
 
-# @app.route('/recipes', methods=['POST'])
-# def suggest_recipes():
-#     """Show user a list of suggested recipes."""
+@app.route('/recipes')
+def suggest_recipes():
+    """Show user a list of suggested recipes."""
 
-#     ingredients = ",".join(ingredients)  # Creating a comma separated string (required for API argument)
+    # Grab user_id from session
+    user_id = session.get('user_id', None)
 
-#     recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name, source, ingredients)
+    ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()  # Returns a list of tuples
+    ingredients = ",".join([ingredient[0] for ingredient in ingredients])  # Creating a comma separated string (required for API argument)
 
-#     return render_template("recipes.html", recipes=recipes)
+    recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name, source, ingredients)
+
+    return render_template("recipes.html", recipes=recipes)
+
+
+@app.route('/used-recipe', methods=["POST", "GET"])
+def add_used_recipe():
+    """Add used recipe to database."""
+
+    #TO DO: Figure out why value of source is equal to None, Look back at recipes.js
+    user_id = session.get('user_id', None)
+    recipe_id = request.args.get("api_id", None)
+    image = request.args.get("image", None)
+    source = request.args.get("source", None)
+    title = request.args.get("title", None)
+    recipe_id = int(recipe_id)
+
+    recipe = Recipe(recipe_id=recipe_id,
+                    user_id=user_id,
+                    title=title,
+                    image_url=image,
+                    source_url=source)
+
+
+    # used_recipe = UsedRecipe(user_id=user_id,
+    #                          recipe_id=recipe_id)
+    
+    raise Exception("huh?")
+    db.session.add(recipe)
+    db.session.commit()
+
+    return "Cooked"
+
+
+@app.route('/favorites.json')
+def add_to_fav():
+    """Change favorited value in Recipe class to True."""
+
+    user_id = session.get('user_id', None)
+
+
 
 
 

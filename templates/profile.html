@@ -17,39 +17,51 @@
         <label for="unit">Unit:<br>
             <select name="unit">
                 <option value="none">N/A
-                <option value="ounce">oz
-                <option value="gram">grams
-                <option value="liter">liter
-                <option value="gallon">gallon
-                <option value="quart">quart
-                <option value="pint">pint
-                <option value="cup">cup
+                <option value="pound(s)">pounds
+                <option value="ounce(s)">ounces
+                <option value="grams(s)">grams
+                <option value="liters(s)">liter
+                <option value="gallon(s)">gallon
+                <option value="quart(s)">quart
+                <option value="pint(s)">pint
+                <option value="cup(s)">cup
             </select><br>
             <select name="unit">
                 <option value="none">N/A
-                <option value="ounce">oz
-                <option value="gram">grams
-                <option value="liter">liter
-                <option value="gallon">gallon
-                <option value="quart">quart
-                <option value="pint">pint
-                <option value="cup">cup
+                <option value="pound(s)">pounds   
+                <option value="ounce(s)">ounces
+                <option value="gram(s)">grams
+                <option value="liter(s)">liter
+                <option value="gallon(s)">gallon
+                <option value="quart(s)">quart
+                <option value="pint(s)">pint
+                <option value="cup(s)">cup
             </select><br>
             <select name="unit">
                 <option value="none">N/A
-                <option value="ounce">oz
-                <option value="gram">grams
-                <option value="liter">liter
-                <option value="gallon">gallon
-                <option value="quart">quart
-                <option value="pint">pint
-                <option value="cup">cup
+                <option value="ounce(s)">ounces
+                <option value="pound(s)">pounds
+                <option value="gram(s)">grams
+                <option value="liter(s)">liters
+                <option value="gallon(s)">gallons
+                <option value="quart(s)">quarts
+                <option value="pint(s)">pints
+                <option value="cup(s)">cups
             </select>
         </label><br>
         <br>
         <input type="submit">
     </form><br>
 
+    <label for="current-ingredients">Current Ingredients:<br>
+        {% if current_ingredients %}
+            {% for ingredient in current_ingredients %}
+                {{ ingredient[0] }} {{ ingredient[1] }} {{ ingredient[2] }}<br>
+            {% endfor %}
+        {% else %}
+            You have no ingredients at the moment.<br>
+        {% endif %}
+    <br>
     <a href="/recipes">Suggested Recipes</a><br>
     <a href="/logout">Logout</a>
 
