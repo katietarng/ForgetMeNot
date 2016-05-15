@@ -188,43 +188,54 @@ def suggest_recipes():
     return render_template("recipes.html", recipes=recipes)
 
 
-@app.route('/used-recipe', methods=["POST", "GET"])
+@app.route('/add-recipe.json', methods=["POST", "GET"])
 def add_used_recipe():
-    """Add used recipe to database."""
-
-    #TO DO: Figure out why value of source is equal to None, Look back at recipes.js
+    """Add used or bookmarked recipes to database."""
+    # Grab data passed in from AJAX call
     user_id = session.get('user_id', None)
+    button = request.args.get("button", None)
     recipe_id = request.args.get("api_id", None)
     image = request.args.get("image", None)
     source = request.args.get("source", None)
     title = request.args.get("title", None)
     recipe_id = int(recipe_id)
 
-    recipe = Recipe(recipe_id=recipe_id,
-                    user_id=user_id,
-                    title=title,
-                    image_url=image,
-                    source_url=source)
+    # Check if this recipe already exists in the used or bookmarked tables
+    used_recipe = db.session.query(UsedRecipe).filter_by(recipe_id=recipe_id).first()
+    bookmarked_recipe = db.session.query(BookmarkedRecipe).filter_by(recipe_id=recipe_id).first()
 
+    # If result of queries is not None, return the appropriate string
+    if used_recipe:
+        return "You have already cooked this recipe."
+    # If result of queries is none, run the following instantiations below
+    elif bookmarked_recipe:
+        return "You have already bookmarked this recipe."
+    else:
+        #Instantiate recipe object of the Recipe class and add to table for referential integrity
+        recipe = Recipe(recipe_id=recipe_id,
+                        user_id=user_id,
+                        title=title,
+                        image_url=image,
+                        source_url=source)
 
-    # used_recipe = UsedRecipe(user_id=user_id,
-    #                          recipe_id=recipe_id)
-    
-    raise Exception("huh?")
-    db.session.add(recipe)
-    db.session.commit()
+        db.session.add(recipe)
+        # db.session.commit()
 
-    return "Cooked"
+        if button == "cook":
+            #Instantiate recipe as an object of the UsedRecipe class and add to table
+            used_recipe = UsedRecipe(user_id=user_id,
+                                     recipe_id=recipe_id)
 
+            db.session.add(used_recipe)
+            # db.session.commit()
+        elif button == "bookmark":
+            # Instantiate recipe as an object of the FavoritedRecipe class
+            bookmarked_recipe = BookmarkedRecipe(user_id=user_id,
+                                                 recipe_id=recipe_id)
+            db.session.add(bookmarked_recipe)
+            # db.session.commit()
 
-@app.route('/favorites.json')
-def add_to_fav():
-    """Change favorited value in Recipe class to True."""
-
-    user_id = session.get('user_id', None)
-
-
-
+        return jsonify(id=recipe_id)
 
 
 if __name__ == "__main__":

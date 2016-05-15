@@ -119,22 +119,6 @@ class BookmarkedRecipe(db.Model):
                              backref=db.backref("saved_recipes", order_by=bookmarked_recipe_id))
 
 
-class FavoriteRecipe(db.Model):
-    """Recipes that have been favorited have been cooked."""
-
-    __tablename__ = "favorite_recipes"
-
-    favorite_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
-
-    user = db.relationship("User",
-                           backref=db.backref("favorite_recipes", order_by=favorite_recipe_id))
-
-    recipe = db.relationship("Recipe",
-                             backref=db.backref("favorite_recipes", order_by=favorite_recipe_id))
-
-
 class Recipe(db.Model):
     """Recipe that has been saved, used, or favorited."""
 

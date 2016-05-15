@@ -2,26 +2,50 @@
 
 function addUsedRecipe(evt) {
 
-    var apiId = {
+    var used = {
+        "button": $(this).attr("class"),
         "api_id": $(this).parent().attr("id"),
         "image": $(this).data("image"),
-        "source": $(this).data("link"),
-        "title": $(this).data("name")
+        "title": $(this).data("name"),
+        "source": $(this).data("link")
     };
 
-    $.get("/used-recipe",
-            apiId,
+    // Send AJAX post request to route with dictionary apiId
+    // Success function will change cook button to "cooked" or will tepmorarily let you know that you have cooked the recipe
+    $.get("/add-recipe.json",
+            used,
             function (result) {
-                $('.cook').html(result);
-                console.log("Inserted into db.");
+                  if (result === "You have cooked this before") {
+                    alert(result);
+                } else {
+                    $("#" + result.id).find(".cook").html("Cooked");
+                    console.log("Inserted into db.");
+                }
           }
 );}
 
 $('.cook').on('click', addUsedRecipe);
 
+function addToBookmarks (evt) {
 
-// function addToFavorites(evt) {
+    var bookmarked = {
+        "button": $(this).attr("class"),
+        "api_id": $(this).parent().attr("id"),
+        "image": $(this).data("image"),
+        "title": $(this).data("name"),
+        "source": $(this).data("link")
+    };
 
-// }
+    $.get("/add-recipe.json",
+        bookmarked,
+        function (result) {
+            if (result === "You have already bookmarked this recipe") {
+                alert(result);
+            } else {
+                $("#" + result.id).find(".bookmark").html("Bookmarked");
+                console.log("Inserted into db.");
+            }
+        });
+}
 
-// $('.favorites').on('click', addToFavorites);
+$('.bookmark').on('click', addToBookmarks);

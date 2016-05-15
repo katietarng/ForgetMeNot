@@ -11,7 +11,6 @@
                 </span>
                 <span class="recipename"><a href="{{ recipe[3]}}" target="_blank">{{ recipe[2] }}</a></span>
                 <br>
-                <button type="button" class="favorites" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Favorite</button>
                 <button type="button" class="bookmarks" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Bookmark</button>
                 <button type="button" class="cook" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Cook</button>
                 <br>
@@ -19,7 +18,7 @@
             <br>
         {% endfor %}
     {% else %}
-        <h4>There are no suggested recipes as you have no ingredients.</h4>
+        <h4>There are no suggested recipes. Please input some ingredients.</h4>
     {% endif %}
 
     
