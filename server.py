@@ -3,9 +3,9 @@ import os
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
-from model import *
 from datetime import datetime
 from generaterecipes import recipe_request, recipe_info
+from model import * 
 
 
 app = Flask(__name__)
@@ -47,12 +47,12 @@ def register_form():
 def process_new_user():
     """Process new user from registration form."""
 
-    username = request.form["username"]
-    email = request.form["email"]
-    password = request.form["password"]
-    first_name = request.form["fname"]
-    last_name = request.form["lname"]
-    phone = request.form["phone"]
+    username = request.form.get("username")
+    email = request.form.get("email")
+    password = request.form.get("password")
+    first_name = request.form.get("fname")
+    last_name = request.form.get("lname")
+    phone = request.form.get("phone")
 
     user = db.session.query(User).filter_by(username=username).first()
 
@@ -80,8 +80,8 @@ def process_new_user():
 def process_login():
     """Process login form."""
 
-    email = request.form["email"]
-    password = request.form["password"]
+    email = request.form.get("email")
+    password = request.form.get("password")
 
     #Want to use .first() so that it can return None type object
     user = User.query.filter_by(email=email).first()
@@ -183,21 +183,21 @@ def suggest_recipes():
     ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()  # Returns a list of tuples
     ingredients = ",".join([ingredient[0] for ingredient in ingredients])  # Creating a comma separated string (required for API argument)
 
-    recipes = recipe_request(ingredients)  # Returns a list of tuples (id, image_url, recipe name, source, ingredients)
+    recipes = recipe_request(ingredients)  # API request that returns a list of tuples (id, image_url, recipe name, source, ingredients)
 
     return render_template("recipes.html", recipes=recipes)
 
 
-@app.route('/add-recipe.json', methods=["POST", "GET"])
+@app.route('/add-recipe.json', methods=["POST"])
 def add_used_recipe():
     """Add used or bookmarked recipes to database."""
     # Grab data passed in from AJAX call
     user_id = session.get('user_id', None)
-    button = request.args.get("button", None)
-    recipe_id = request.args.get("api_id", None)
-    image = request.args.get("image", None)
-    source = request.args.get("source", None)
-    title = request.args.get("title", None)
+    button = request.form.get("button", None)
+    recipe_id = request.form.get("api_id", None)
+    image = request.form.get("image", None)
+    source = request.form.get("source", None)
+    title = request.form.get("title", None)
     recipe_id = int(recipe_id)
 
     # Check if this recipe already exists in the used or bookmarked tables
@@ -219,21 +219,22 @@ def add_used_recipe():
                         source_url=source)
 
         db.session.add(recipe)
-        # db.session.commit()
+        db.session.commit()
 
+        # TO DO: Add used_ingredients from generated recipe to the used ingredients class
         if button == "cook":
             #Instantiate recipe as an object of the UsedRecipe class and add to table
             used_recipe = UsedRecipe(user_id=user_id,
                                      recipe_id=recipe_id)
 
             db.session.add(used_recipe)
-            # db.session.commit()
+            db.session.commit()
         elif button == "bookmark":
             # Instantiate recipe as an object of the FavoritedRecipe class
             bookmarked_recipe = BookmarkedRecipe(user_id=user_id,
                                                  recipe_id=recipe_id)
             db.session.add(bookmarked_recipe)
-            # db.session.commit()
+            db.session.commit()
 
         return jsonify(id=recipe_id)
 

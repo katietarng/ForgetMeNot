@@ -12,7 +12,7 @@ function addUsedRecipe(evt) {
 
     // Send AJAX post request to route with dictionary apiId
     // Success function will change cook button to "cooked" or will tepmorarily let you know that you have cooked the recipe
-    $.get("/add-recipe.json",
+    $.post("/add-recipe.json",
             used,
             function (result) {
                   if (result === "You have cooked this before") {
@@ -36,7 +36,7 @@ function addToBookmarks (evt) {
         "source": $(this).data("link")
     };
 
-    $.get("/add-recipe.json",
+    $.post("/add-recipe.json",
         bookmarked,
         function (result) {
             if (result === "You have already bookmarked this recipe") {
