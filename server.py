@@ -1,11 +1,13 @@
 import os
+import json
 
 from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from generaterecipes import recipe_request, recipe_info
-from model import * 
+from model import *
+
 
 
 app = Flask(__name__)
@@ -183,60 +185,101 @@ def suggest_recipes():
     ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()  # Returns a list of tuples
     ingredients = ",".join([ingredient[0] for ingredient in ingredients])  # Creating a comma separated string (required for API argument)
 
-    recipes = recipe_request(ingredients)  # API request that returns a list of tuples (id, image_url, recipe name, source, ingredients)
-
+    recipes = recipe_request(ingredients)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
     return render_template("recipes.html", recipes=recipes)
 
 
-@app.route('/add-recipe.json', methods=["POST"])
+@app.route('/add-recipe.json', methods=["POST", "GET"])
 def add_used_recipe():
     """Add used or bookmarked recipes to database."""
     # Grab data passed in from AJAX call
     user_id = session.get('user_id', None)
-    button = request.form.get("button", None)
-    recipe_id = request.form.get("api_id", None)
-    image = request.form.get("image", None)
-    source = request.form.get("source", None)
-    title = request.form.get("title", None)
+    button = request.args.get("button", None)
+    recipe_id = request.args.get("api_id", None)
+    image = request.args.get("image", None)
+    source = request.args.get("source", None)
+    title = request.args.get("title", None) 
+    ingredients = request.args.get("ingredients", None)
+    json.loads("ingredients")
+
     recipe_id = int(recipe_id)
 
+    raise Exception("why?")
+
     # Check if this recipe already exists in the used or bookmarked tables
-    used_recipe = db.session.query(UsedRecipe).filter_by(recipe_id=recipe_id).first()
-    bookmarked_recipe = db.session.query(BookmarkedRecipe).filter_by(recipe_id=recipe_id).first()
+    used_recipe = UsedRecipe.query.filter_by(recipe_id=recipe_id).first()
+    bookmarked_recipe = BookmarkedRecipe.query.filter_by(recipe_id=recipe_id).first()
+
+    print recipe_id, used_recipe, ingredients
 
     # If result of queries is not None, return the appropriate string
     if used_recipe:
         return "You have already cooked this recipe."
-    # If result of queries is none, run the following instantiations below
-    elif bookmarked_recipe:
+    if bookmarked_recipe:
         return "You have already bookmarked this recipe."
-    else:
-        #Instantiate recipe object of the Recipe class and add to table for referential integrity
-        recipe = Recipe(recipe_id=recipe_id,
-                        user_id=user_id,
-                        title=title,
-                        image_url=image,
-                        source_url=source)
 
-        db.session.add(recipe)
+    #Instantiate recipe object of the Recipe class and add to table for referential integrity
+    recipe = Recipe(recipe_id=recipe_id,
+                    user_id=user_id,
+                    title=title,
+                    image_url=image,
+                    source_url=source)
+
+    db.session.add(recipe)
+    db.session.commit()
+
+    if button == "cook":
+        add_cooked_recipe(user_id, recipe_id, ingredients)
+    elif button == "bookmarks":
+        add_bookmark(user_id, recipe_id)
+
+    return jsonify(id=recipe_id)
+
+
+def add_bookmark(user_id, recipe_id):
+    """Add bookmarked recipe to database."""
+
+    bookmarked_recipe = BookmarkedRecipe(user_id=user_id,
+                                         recipe_id=recipe_id)
+    db.session.add(bookmarked_recipe)
+    db.session.commit()
+
+
+def add_cooked_recipe(user_id, recipe_id, ingredients):
+    """Add cooked recipe and the used ingredients to databse."""
+
+    used_recipe = UsedRecipe(user_id=user_id,
+                             recipe_id=recipe_id)
+
+    db.session.add(used_recipe)
+    db.session.commit()
+
+    used_recipe = db.session.query(UsedRecipe).filter_by(recipe_id=recipe_id).first()
+    used_recipe_id = used_recipe.used_recipe_id
+
+    for ingredient in ingredients:
+        print "**********"
+        print ingredient
+        print type(ingredient)
+        print "**********"
+
+
+        name = ingredient[0]
+        amount = ingredient[1]
+        unit = ingredient[2]
+
+
+
+        used_ingredient = UsedIngredient(user_id=user_id,
+                                         used_recipe_id=used_recipe_id,
+                                         name=name,
+                                         amount=amount,
+                                         unit=unit)
+
+        print used_ingredient
+
+        db.session.add(used_ingredient)
         db.session.commit()
-
-        # TO DO: Add used_ingredients from generated recipe to the used ingredients class
-        if button == "cook":
-            #Instantiate recipe as an object of the UsedRecipe class and add to table
-            used_recipe = UsedRecipe(user_id=user_id,
-                                     recipe_id=recipe_id)
-
-            db.session.add(used_recipe)
-            db.session.commit()
-        elif button == "bookmark":
-            # Instantiate recipe as an object of the FavoritedRecipe class
-            bookmarked_recipe = BookmarkedRecipe(user_id=user_id,
-                                                 recipe_id=recipe_id)
-            db.session.add(bookmarked_recipe)
-            db.session.commit()
-
-        return jsonify(id=recipe_id)
 
 
 if __name__ == "__main__":

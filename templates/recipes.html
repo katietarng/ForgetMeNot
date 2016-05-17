@@ -5,19 +5,19 @@
 
     {% if recipes %} 
         {% for recipe in recipes %}
-            <div class="recipe" id="{{ recipe[0]}}">
+            <div class="recipe" id="{{ recipe['recipe_id']}}">
                 <span class="recipeimage">
-                    <img src="{{ recipe[1] }}">
+                    <img src="{{ recipe['image']}}">
                 </span>
-                <span class="recipename"><a href="{{ recipe[3]}}" target="_blank">{{ recipe[2] }}</a></span>
-                <span class="ingredients"><a
+                <span class="recipename"><a href="{{ recipe['source'] }}" target="_blank">{{ recipe['name'] }}</a></span>
+                <span class="ingredients" hidden>{{ recipe['ingredients'] }}</span>
                 <br>
-                <button type="button" class="bookmarks" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Bookmark</button>
-                <button type="button" class="cook" data-image="{{ recipe[1] }}" data-link="{{ recipe[3] }}" data-name="{{ recipe[2] }}">Cook</button>
+                <button type="button" class="bookmarks" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Bookmark</button>
+                <button type="button" class="cook" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Cook</button>
                 <br>
             </div>
             <br>
-        {% endfor %}
+       {% endfor %}
     {% else %}
         <h4>There are no suggested recipes. Please add ingredients to your profile.</h4>
     {% endif %}

@@ -67,7 +67,7 @@ class UsedIngredient(db.Model):
     name = db.Column(db.String(70), nullable=False, unique=True)
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)
-    frequency = db.Column(db.Integer, nullable=False)  # Number of times ingredient has been used in recipes
+    frequency = db.Column(db.Integer, nullable=True)  # Number of times ingredient has been used in recipes
 
     user = db.relationship("User",
                            backref=db.backref("used_ingredients", order_by=ingredient_id))

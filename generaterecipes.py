@@ -6,7 +6,6 @@ import inflect
 # Initiate w as an object of the inflect module
 w = inflect.engine()
 
-
 #Dynamically pass in ingredients
 def recipe_request(ingredients):
     """Return a list of recipes that matches ingredient list."""
@@ -33,6 +32,7 @@ def recipe_request(ingredients):
 
     # Within one recipe starting from line 30
     for response in responses:
+        recipe = {}
         recipe_id = response['id']
         image_url = response['image']
         title = response['title']
@@ -44,20 +44,27 @@ def recipe_request(ingredients):
         source = info[0]
         ingredients = info[1]
 
-        ing = []
-
+        ings = []
+        ing = {}
         # Grab the ingredients that are used in the recipe and return the amount, unit used for that ingredient in the recipe
-        for ingredient in ingredients:     # Within a recipe within a single ingredient
+        for ingredient in ingredients:
             if ingredient[0] in used_ingredients:
-                ingredient = (ingredient[0], ingredient[1], ingredient[2])
-                ing.append(ingredient)
+                ing["name"] = ingredient[0]
+                ing["amount"] = ingredient[1]
+                ing["unit"] = ingredient[2]
+                ings.append(ing)
             else:
                 pass
 
-        recipe = (recipe_id, image_url, title, source, ing)
+        recipe["recipe_id"] = recipe_id
+        recipe["image"] = image_url
+        recipe["name"] = title
+        recipe["source"] = source
+        recipe["ingredients"] = ings
+
         recipes.append(recipe)
 
-    print recipes
+    return recipes
 
 
 def recipe_info(recipe_id):

@@ -5,6 +5,7 @@ function addUsedRecipe(evt) {
     var used = {
         "button": $(this).attr("class"),
         "api_id": $(this).parent().attr("id"),
+        "ingredients": $(this).siblings(".ingredients").html(),
         "image": $(this).data("image"),
         "title": $(this).data("name"),
         "source": $(this).data("link")
@@ -12,10 +13,10 @@ function addUsedRecipe(evt) {
 
     // Send AJAX post request to route with dictionary apiId
     // Success function will change cook button to "cooked" or will tepmorarily let you know that you have cooked the recipe
-    $.post("/add-recipe.json",
+    $.get("/add-recipe.json",
             used,
             function (result) {
-                  if (result === "You have cooked this before") {
+                  if (result === "You have already cooked this recipe.") {
                     alert(result);
                 } else {
                     $("#" + result.id).find(".cook").html("Cooked");
@@ -31,12 +32,13 @@ function addToBookmarks (evt) {
     var bookmarked = {
         "button": $(this).attr("class"),
         "api_id": $(this).parent().attr("id"),
+        "ingredients": $(this).siblings(".ingredients").html(),
         "image": $(this).data("image"),
         "title": $(this).data("name"),
         "source": $(this).data("link")
     };
 
-    $.post("/add-recipe.json",
+    $.get("/add-recipe.json",
         bookmarked,
         function (result) {
             if (result === "You have already bookmarked this recipe") {
@@ -48,4 +50,5 @@ function addToBookmarks (evt) {
         });
 }
 
-$('.bookmark').on('click', addToBookmarks);
+$('.bookmarks').on('click', addToBookmarks);
+
