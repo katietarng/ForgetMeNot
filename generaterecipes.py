@@ -2,6 +2,7 @@ import os
 import unirest
 from model import *
 import inflect
+import json
 
 # Initiate w as an object of the inflect module
 w = inflect.engine()
@@ -60,7 +61,7 @@ def recipe_request(ingredients):
         recipe["image"] = image_url
         recipe["name"] = title
         recipe["source"] = source
-        recipe["ingredients"] = ings
+        recipe["ingredients"] = json.dumps({"ingredient_list": ings})
 
         recipes.append(recipe)
 

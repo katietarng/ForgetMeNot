@@ -9,7 +9,6 @@ from generaterecipes import recipe_request, recipe_info
 from model import *
 
 
-
 app = Flask(__name__)
 
 app.secret_key = os.environ['APP_KEY']
@@ -198,42 +197,38 @@ def add_used_recipe():
     recipe_id = request.args.get("api_id", None)
     image = request.args.get("image", None)
     source = request.args.get("source", None)
-    title = request.args.get("title", None) 
+    title = request.args.get("title", None)
     ingredients = request.args.get("ingredients", None)
-    json.loads("ingredients")
 
     recipe_id = int(recipe_id)
-
-    raise Exception("why?")
+    ingredients = json.loads(ingredients)  # Turn ingredient string into a dictionary
 
     # Check if this recipe already exists in the used or bookmarked tables
     used_recipe = UsedRecipe.query.filter_by(recipe_id=recipe_id).first()
     bookmarked_recipe = BookmarkedRecipe.query.filter_by(recipe_id=recipe_id).first()
 
-    print recipe_id, used_recipe, ingredients
-
     # If result of queries is not None, return the appropriate string
     if used_recipe:
         return "You have already cooked this recipe."
-    if bookmarked_recipe:
+    elif bookmarked_recipe:
         return "You have already bookmarked this recipe."
+    else:
+        #Instantiate recipe object of the Recipe class and add to table for referential integrity
+        recipe = Recipe(recipe_id=recipe_id,
+                        user_id=user_id,
+                        title=title,
+                        image_url=image,
+                        source_url=source)
 
-    #Instantiate recipe object of the Recipe class and add to table for referential integrity
-    recipe = Recipe(recipe_id=recipe_id,
-                    user_id=user_id,
-                    title=title,
-                    image_url=image,
-                    source_url=source)
+        db.session.add(recipe)
+        db.session.commit()
 
-    db.session.add(recipe)
-    db.session.commit()
+        if button == "cook":
+            add_cooked_recipe(user_id, recipe_id, ingredients)
+        elif button == "bookmarks":
+            add_bookmark(user_id, recipe_id)
 
-    if button == "cook":
-        add_cooked_recipe(user_id, recipe_id, ingredients)
-    elif button == "bookmarks":
-        add_bookmark(user_id, recipe_id)
-
-    return jsonify(id=recipe_id)
+        return jsonify(id=recipe_id)
 
 
 def add_bookmark(user_id, recipe_id):
@@ -246,8 +241,7 @@ def add_bookmark(user_id, recipe_id):
 
 
 def add_cooked_recipe(user_id, recipe_id, ingredients):
-    """Add cooked recipe and the used ingredients to databse."""
-
+    """Add cooked recipe and the used ingredients to database."""
     used_recipe = UsedRecipe(user_id=user_id,
                              recipe_id=recipe_id)
 
@@ -257,29 +251,25 @@ def add_cooked_recipe(user_id, recipe_id, ingredients):
     used_recipe = db.session.query(UsedRecipe).filter_by(recipe_id=recipe_id).first()
     used_recipe_id = used_recipe.used_recipe_id
 
-    for ingredient in ingredients:
-        print "**********"
-        print ingredient
-        print type(ingredient)
-        print "**********"
+    for key, value in ingredients.items():
+        for ing in ingredients["ingredient_list"]:
+            amount = ing["amount"]
+            name = ing["name"]
+            unit = ing["unit"]
 
+            if unit == ""
+                unit = "none"
+            
+            used_ingredient = UsedIngredient(user_id=user_id,
+                                             used_recipe_id=used_recipe_id,
+                                             name=name,
+                                             amount=amount,
+                                             unit=unit)
 
-        name = ingredient[0]
-        amount = ingredient[1]
-        unit = ingredient[2]
+            print used_ingredient
 
-
-
-        used_ingredient = UsedIngredient(user_id=user_id,
-                                         used_recipe_id=used_recipe_id,
-                                         name=name,
-                                         amount=amount,
-                                         unit=unit)
-
-        print used_ingredient
-
-        db.session.add(used_ingredient)
-        db.session.commit()
+            db.session.add(used_ingredient)
+            db.session.commit()
 
 
 if __name__ == "__main__":
