@@ -17,36 +17,36 @@
         <label for="unit">Unit:<br>
             <select name="unit">
                 <option value="none">N/A
-                <option value="pound(s)">pounds
-                <option value="ounce(s)">ounces
-                <option value="grams(s)">grams
-                <option value="liters(s)">liters
-                <option value="gallon(s)">gallons
-                <option value="quart(s)">quarts
-                <option value="pint(s)">pints
-                <option value="cup(s)">cups
+                <option value="lb">pounds
+                <option value="ounce">ounces
+                <option value="gram">grams
+                <option value="liter">liters
+                <option value="us_g">gallons
+                <option value="us_qt">quarts
+                <option value="us_pint">pints
+                <option value="us_cup">cups
             </select><br>
             <select name="unit">
                 <option value="none">N/A
-                <option value="pound(s)">pounds   
-                <option value="ounce(s)">ounces
-                <option value="gram(s)">grams
-                <option value="liter(s)">liters
-                <option value="gallon(s)">gallons
-                <option value="quart(s)">quarts
-                <option value="pint(s)">pints
-                <option value="cup(s)">cups
+                <option value="lb">pounds   
+                <option value="ounce">ounces
+                <option value="gram">grams
+                <option value="liter">liters
+                <option value="us_g">gallons
+                <option value="us_qt">quarts
+                <option value="us_pint">pints
+                <option value="us_cup">cups
             </select><br>
             <select name="unit">
                 <option value="none">N/A
-                <option value="pound(s)">pounds
-                <option value="ounce(s)">ounces
-                <option value="gram(s)">grams
-                <option value="liter(s)">liters
-                <option value="gallon(s)">gallons
-                <option value="quart(s)">quarts
-                <option value="pint(s)">pints
-                <option value="cup(s)">cups
+                <option value="lb">pounds
+                <option value="ounce">ounces
+                <option value="gram">grams
+                <option value="liter">liters
+                <option value="us_g">gallons
+                <option value="us_qt">quarts
+                <option value="us_pint">pints
+                <option value="us_cup">cups
             </select>
         </label><br>
         <br>
@@ -56,10 +56,10 @@
     <label for="current-ingredients">Current Ingredients:<br>
         {% if current_ingredients %}
             {% for ingredient in current_ingredients %}
-                {% if ingredient[2] == "none" %}
-                    {{ ingredient[0] }} {{ ingredient[1] }}<br>
+                {% if ingredient["unit"] == "none" %}
+                    {{ ingredient["name"] }} {{ ingredient["amount"] }}<br>
                 {% else %}
-                    {{ ingredient[0] }} {{ ingredient[1] }} {{ ingredient[2] }}<br>
+                    {{ ingredient["name"] }} {{ ingredient["amount"] }} {{ ingredient["unit"] }}<br>
                 {% endif %}
             {% endfor %}
         {% else %}

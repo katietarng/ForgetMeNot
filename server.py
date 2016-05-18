@@ -25,14 +25,16 @@ def index():
 
     if user_id:
         user = User.query.get(user_id)
-        current_ingredients = db.session.query(Ingredient.name, Ingredient.amount, Ingredient.unit).filter_by(user_id=user_id).all()
+        current_ingredients = Ingredient.query.filter_by(user_id=user.user_id).all()
+        current_ingredients = return_current_ingredients(current_ingredients)
         name = user.fname
         date = datetime.now()
         date = date.strftime("%B %d, %Y")
         return render_template("profile.html",
                                name=name,
                                date=date,
-                               current_ingredients=current_ingredients)
+                               current_ingredients=current_ingredients
+                               )
 
     return render_template("homepage.html")
 
@@ -115,7 +117,10 @@ def show_user_profile(username):
     """Show user profile."""
 
     user = db.session.query(User).filter_by(username=username).one()
-    current_ingredients = db.session.query(Ingredient.name, Ingredient.amount, Ingredient.unit).filter_by(user_id=user.user_id).all()
+    current_ingredients = Ingredient.query.filter_by(user_id=user.user_id).all()
+
+    current_ingredients = return_current_ingredients(current_ingredients)  # Calling helper function to return a list of dictionaries that are current ingredients
+
     name = user.fname
     date = datetime.now()
     date = date.strftime("%B %d, %Y")
@@ -188,17 +193,17 @@ def suggest_recipes():
     return render_template("recipes.html", recipes=recipes)
 
 
-@app.route('/add-recipe.json', methods=["POST", "GET"])
+@app.route('/add-recipe.json', methods=["POST"])
 def add_used_recipe():
     """Add used or bookmarked recipes to database."""
     # Grab data passed in from AJAX call
     user_id = session.get('user_id', None)
-    button = request.args.get("button", None)
-    recipe_id = request.args.get("api_id", None)
-    image = request.args.get("image", None)
-    source = request.args.get("source", None)
-    title = request.args.get("title", None)
-    ingredients = request.args.get("ingredients", None)
+    button = request.form.get("button", None)
+    recipe_id = request.form.get("api_id", None)
+    image = request.form.get("image", None)
+    source = request.form.get("source", None)
+    title = request.form.get("title", None)
+    ingredients = request.form.get("ingredients", None)
 
     recipe_id = int(recipe_id)
     ingredients = json.loads(ingredients)  # Turn ingredient string into a dictionary
@@ -231,6 +236,48 @@ def add_used_recipe():
         return jsonify(id=recipe_id)
 
 # ~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~~~~
+def return_current_ingredients(current_ingredients):
+
+    ings = []
+    for ingredient in current_ingredients:
+        ingredients = {}
+
+        unit = change_units(ingredient.unit)
+        name = ingredient.name
+        amount = ingredient.amount
+
+        ingredients["unit"] = unit
+        ingredients["name"] = name
+        ingredients["amount"] = amount
+
+        ings.append(ingredients)
+
+    return ings
+
+
+def change_units(unit):
+
+    if unit == "lb":
+        unit = "pound(s)"
+    elif unit == "ounce":
+        unit = "ounce(s)"
+    elif unit == "gram":
+        unit = "gram(s)"
+    elif unit == "liter":
+        unit = "liter(s)"
+    elif unit == "us_g":
+        unit = "gallon(s)"
+    elif unit == "us_qt":
+        unit = "quart(s)"
+    elif unit == "us_pint":
+        unit = "pint(s)"
+    elif unit == "us_cup":
+        unit = "cup(s)"
+    else:
+        unit = "none"
+
+    return unit
+
 
 def add_bookmark(user_id, recipe_id):
     """Add bookmarked recipe to database."""
