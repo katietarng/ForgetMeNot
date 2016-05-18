@@ -46,22 +46,22 @@ def recipe_request(ingredients):
         ingredients = info[1]
 
         ings = []
-        ing = {}
         # Grab the ingredients that are used in the recipe and return the amount, unit used for that ingredient in the recipe
         for ingredient in ingredients:
-            if ingredient[0] in used_ingredients:
-                ing["name"] = ingredient[0]
+            ing = {}
+            name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the actual ingredient
+
+            if name[-1] in used_ingredients:  # Check if used ingredient
+                ing["name"] = name[-1]
                 ing["amount"] = ingredient[1]
                 ing["unit"] = ingredient[2]
                 ings.append(ing)
-            else:
-                pass
 
         recipe["recipe_id"] = recipe_id
         recipe["image"] = image_url
         recipe["name"] = title
         recipe["source"] = source
-        recipe["ingredients"] = json.dumps({"ingredient_list": ings})
+        recipe["ingredients"] = json.dumps({"used_ings": ings})
 
         recipes.append(recipe)
 
@@ -97,7 +97,7 @@ def recipe_info(recipe_id):
         else:
             name = w.singular_noun(name, count=0)  # Setting count=0, allows nouns that are already singular to return as is
 
-        ingredient = [name, ingredient['amount'], ingredient['unit']]
+        ingredient = (name, ingredient['amount'], ingredient['unit'])
         ing.append(ingredient)
 
     recipe = (source, ing)

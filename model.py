@@ -63,7 +63,6 @@ class UsedIngredient(db.Model):
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    used_recipe_id = db.Column(db.Integer, db.ForeignKey('used_recipes.used_recipe_id'))
     name = db.Column(db.String(70), nullable=False, unique=True)
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)
@@ -72,19 +71,15 @@ class UsedIngredient(db.Model):
     user = db.relationship("User",
                            backref=db.backref("used_ingredients", order_by=ingredient_id))
 
-    used_recipe = db.relationship("UsedRecipe",
-                                  backref=db.backref("used_ingredients", order_by=ingredient_id))
-
     def __repr__(self):
         """Print ingredients used in recipe."""
 
-        return "<Used Ingredient user_id={} ingredient_id={}, used_id = {}, name={}, amount={}, unit={}, frequency={}>".format(self.user_id,
-                                                                                                                               self.ingredient_id,
-                                                                                                                               self.used_id,
-                                                                                                                               self.name,
-                                                                                                                               self.amount,
-                                                                                                                               self.unit,
-                                                                                                                               self.frequency)
+        return "<Used Ingredient user_id={} ingredient_id={}, name={}, amount={}, unit={}, frequency={}>".format(self.user_id,
+                                                                                                                 self.ingredient_id,
+                                                                                                                 self.name,
+                                                                                                                 self.amount,
+                                                                                                                 self.unit,
+                                                                                                                 self.frequency)
 
 
 class UsedRecipe(db.Model):

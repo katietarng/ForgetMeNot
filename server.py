@@ -230,6 +230,7 @@ def add_used_recipe():
 
         return jsonify(id=recipe_id)
 
+# ~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~~~~
 
 def add_bookmark(user_id, recipe_id):
     """Add bookmarked recipe to database."""
@@ -242,33 +243,34 @@ def add_bookmark(user_id, recipe_id):
 
 def add_cooked_recipe(user_id, recipe_id, ingredients):
     """Add cooked recipe and the used ingredients to database."""
+
     used_recipe = UsedRecipe(user_id=user_id,
                              recipe_id=recipe_id)
-
     db.session.add(used_recipe)
     db.session.commit()
 
-    used_recipe = db.session.query(UsedRecipe).filter_by(recipe_id=recipe_id).first()
-    used_recipe_id = used_recipe.used_recipe_id
-
     for key, value in ingredients.items():
-        for ing in ingredients["ingredient_list"]:
+        for ing in ingredients["used_ings"]:
             amount = ing["amount"]
             name = ing["name"]
             unit = ing["unit"]
 
-            if unit == ""
+            if unit == "":
                 unit = "none"
-            
-            used_ingredient = UsedIngredient(user_id=user_id,
-                                             used_recipe_id=used_recipe_id,
-                                             name=name,
-                                             amount=amount,
-                                             unit=unit)
 
-            print used_ingredient
+            # Check to see if the used ingredient is already in the table
+            used_ing = UsedIngredient.query.filter_by(name=name).first()
 
-            db.session.add(used_ingredient)
+            # If so, add the amount to used_ingredient
+            if used_ing:
+                used_ing.amount += amount
+            else:
+                used_ingredient = UsedIngredient(user_id=user_id,
+                                                 name=name,
+                                                 amount=amount,
+                                                 unit=unit)
+
+                db.session.add(used_ingredient)
             db.session.commit()
 
 
