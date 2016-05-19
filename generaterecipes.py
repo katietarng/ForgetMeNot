@@ -88,7 +88,14 @@ def recipe_info(recipe_id):
     ing = []
 
     for ingredient in ingredients:
-        name = ingredient['name']
+        name = ingredient["name"]
+        unit = ingredient["unit"].lower()
+
+        # Using the inflect module, change any plural units into singular units - for consistency purposes
+        if unit == "":
+            pass
+        elif unit[-1] == "s":
+            unit = w.singular_noun(unit)
 
         # Using the inflect module, change any plural ingredients into singular ingredients
         # Singular ingredients are needed to match used ingredients in recipe request function
@@ -97,7 +104,7 @@ def recipe_info(recipe_id):
         else:
             name = w.singular_noun(name, count=0)  # Setting count=0, allows nouns that are already singular to return as is
 
-        ingredient = (name, ingredient['amount'], ingredient['unit'])
+        ingredient = (name, ingredient["amount"], unit)
         ing.append(ingredient)
 
     recipe = (source, ing)

@@ -30,6 +30,29 @@ class User(db.Model):
                                                                                                      self.phone)
 
 
+class IngMeasurement(db.Model):
+    """Ingredient measurements for various ingredients."""
+
+    __tablename__ = "measurements"
+
+    weight_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    name = db.Column(db.String(40), nullable=False)
+    volume = db.Column(db.Float, nullable=False)
+    vol_unit = db.Column(db.String(20), nullable=False)
+    ounce = db.Column(db.Float, nullable=True)
+    gram = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        """Print ingredient measurements."""
+
+        return "<Ingredient measurement weight_id={}, name={}, volume={}, vol_unit={}, ounce={} gram={}>".format(self.weight_id,
+                                                                                                                 self.name,
+                                                                                                                 self.volume,
+                                                                                                                 self.vol_unit,
+                                                                                                                 self.ounce,
+                                                                                                                 self.gram)
+
+
 class Ingredient(db.Model):
     """Ingredient in fridge or pantry."""
 

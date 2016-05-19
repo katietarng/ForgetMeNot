@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from generaterecipes import recipe_request, recipe_info
+from processdata import return_current_ingredients, add_bookmark, add_cooked_recipe
 from model import *
 
 
@@ -234,91 +235,6 @@ def add_used_recipe():
             add_bookmark(user_id, recipe_id)
 
         return jsonify(id=recipe_id)
-
-# ~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~~~~
-def return_current_ingredients(current_ingredients):
-
-    ings = []
-    for ingredient in current_ingredients:
-        ingredients = {}
-
-        unit = change_units(ingredient.unit)
-        name = ingredient.name
-        amount = ingredient.amount
-
-        ingredients["unit"] = unit
-        ingredients["name"] = name
-        ingredients["amount"] = amount
-
-        ings.append(ingredients)
-
-    return ings
-
-
-def change_units(unit):
-
-    if unit == "lb":
-        unit = "pound(s)"
-    elif unit == "ounce":
-        unit = "ounce(s)"
-    elif unit == "gram":
-        unit = "gram(s)"
-    elif unit == "liter":
-        unit = "liter(s)"
-    elif unit == "us_g":
-        unit = "gallon(s)"
-    elif unit == "us_qt":
-        unit = "quart(s)"
-    elif unit == "us_pint":
-        unit = "pint(s)"
-    elif unit == "us_cup":
-        unit = "cup(s)"
-    else:
-        unit = "none"
-
-    return unit
-
-
-def add_bookmark(user_id, recipe_id):
-    """Add bookmarked recipe to database."""
-
-    bookmarked_recipe = BookmarkedRecipe(user_id=user_id,
-                                         recipe_id=recipe_id)
-    db.session.add(bookmarked_recipe)
-    db.session.commit()
-
-
-def add_cooked_recipe(user_id, recipe_id, ingredients):
-    """Add cooked recipe and the used ingredients to database."""
-
-    used_recipe = UsedRecipe(user_id=user_id,
-                             recipe_id=recipe_id)
-    db.session.add(used_recipe)
-    db.session.commit()
-
-    for key, value in ingredients.items():
-        for ing in ingredients["used_ings"]:
-            amount = ing["amount"]
-            name = ing["name"]
-            unit = ing["unit"]
-
-            if unit == "":
-                unit = "none"
-
-            # Check to see if the used ingredient is already in the table
-            used_ing = UsedIngredient.query.filter_by(name=name).first()
-
-            # If so, add the amount to used_ingredient
-            if used_ing:
-                used_ing.amount += amount
-            else:
-                used_ingredient = UsedIngredient(user_id=user_id,
-                                                 name=name,
-                                                 amount=amount,
-                                                 unit=unit)
-
-                db.session.add(used_ingredient)
-            db.session.commit()
 
 
 if __name__ == "__main__":

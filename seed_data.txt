@@ -1,0 +1,28 @@
+flour|1|us_cup|4.25|120
+baking powder|1|us_tsp||4
+baking soda|0.5|us_tsp||3
+butter|0.5|us_cup|4|113
+cheese|1|us_cup|4|113
+chocolate|1|us_cup|6|170
+chocolate chips|1|us_cup|6|170
+cocoa|1|us_cup|3|85
+coffee powder|2|us_tsp|0.25|4
+cornmeal|1|us_cup|4.875|138
+corn syrup|1|us_cup|11|312
+cornstarch|0.25|us_cup|1|28
+cream|1|us_cup|8|227
+honey|1|us_tbsp|0.75|21
+jam|0.25|us_cup|3|85
+malt syrup|2|us_tbsp|1.5|43
+mayonnaise|0.5|us_cup|4|113
+milk|1|us_cup|8|227
+molasses|0.25|us_cup|3|85
+oats|0.5|us_cup|2.88|99
+oil|1|us_cup|7|198
+peanut butter|0.5|us_cup|4.75|135
+pumpkin|1|us_cup|9.5|269
+quinoa|1|us_cup|6.25|177
+rice|0.5|us_cup|3.50|99
+sour cream|1|us_cup|8|227
+sugar|2|us_cup|8|227
+yogurt|1|us_cup|8|227
