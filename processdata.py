@@ -1,5 +1,7 @@
 from model import *
-from measurement.measures import Volume, Weight
+import pint 
+
+p = pint.UnitRegistry(system="US")
 
 # ~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~~~~
 
@@ -11,16 +13,14 @@ def return_current_ingredients(current_ingredients):
     for ingredient in current_ingredients:
         ingredients = {}
 
-        unit = match_units(ingredient.unit)
-        name = ingredient.name
-        amount = ingredient.amount
+        if ingredient.amount > 1 and ingredient.unit != "none":  # Pluralize the units
+            unit = ingredient.unit + "s"
+            ingredients["unit"] = unit
+        else:
+            ingredients["unit"] = ingredient.unit
 
-        if amount > 1 and unit != "none":  # Pluralize the units
-            unit = unit + "s"
-
-        ingredients["unit"] = unit
-        ingredients["name"] = name
-        ingredients["amount"] = amount
+        ingredients["name"] = ingredient.name
+        ingredients["amount"] = ingredient.amount
 
         ings.append(ingredients)
 
@@ -69,67 +69,54 @@ def add_cooked_recipe(user_id, recipe_id, ingredients):
             db.session.commit()
 
 
-def match_units(unit):
-    """Return key or value of unit provided."""
-
-    UNITS = {"lb": "pound",
-             "ounce": "ounce",
-             "gram": "gram",
-             "liter": "liter",
-             "us_g": "gallon",
-             "quart": "quart",
-             "pint": "pint",
-             "us_cup": "cup",
-             "us_tbsp": ["tablespoon", "tbsp"],
-             "us_tsp": ["teaspooon", "tsp"],
-             "serving": "ounce",
-             "none": "none"
-             }
-
-    for key, value in UNITS.items():
-        if key == unit:
-            return UNITS[key]
-        if UNITS[key] == unit:
-            return key
-
-
 def calculate_amount():
     """Calculate new ingredient amount after ingredient has been used."""
 
-    user_id = session.get('user_id', None)
+    # user_id = session.get('user_id', None)
+    user_id = 1
+    used_ings = UsedIngredient.query.filter_by(user_id=user_id).all()
 
-    ingredients = Ingredient.query.filter_by(user_id=user_id).all()
-
-    for ingredient in ingredients:
-        used_ing = UsedIngredient.query.filter_by(name=ingredient.name, user_id=user_id).first()
-        unit = used_ing.unit  # Unit for used ingredient
-        unit = match_units(unit)
+    for used_ing in used_ings:
+        ingredient = Ingredient.query.filter_by(name=used_ing.name, user_id=user_id).first()
         ing_unit = ingredient.unit
 
-        if unit != ing_unit: 
-            # Run calculation
-            pass
-        else: 
+        if used_ing.unit != ing_unit:
+            used_amount = convert_units(used_ing, ing_unit)
+            amount = float("%0.2f" % (ingredient.amount - used_amount))
+            print amount
+        else:
             amount = ingredient.amount - used_ing.amount
-        
+            print amount
         db.session.query(Ingredient).filter_by(name=ingredient.name, user_id=user_id).update({Ingredient.amount: amount})
 
     db.session.commit()
 
 
-def convert_units(unit):
+def convert_units(used_ing, ing_unit):
     """Convert used ingredient unit to current ingredient unit."""
 
-    measurement = IngMeasurement.query.filter_by(name=used_ing.name).first()
+    measurement = IngMeasurement.query.filter_by(name=used_ing.name).first()  # Query to see if ingredient is in measurements library
 
-    if measurement: 
-        amount = used_ing.amount * measurement.gram
-        weight = Weight(grams=amount)
+    # If volume to weight conversion exists in measurements table, run the calculation below
+    if measurement:
+        used_amount = str(used_ing.amount * measurement.gram)
+        used_amount += "gram"
+        used_amount = p(used_amount).to(ing_unit)
+        used_amount = used_amount.m  # Using the m method from the pint library to grab the value
+        return used_amount
+    # If ingredient does not exist in measurements table, convert units
+    else:
+        used_amount = str(used_ing.amount + used_ing.unit)
+        used_amount = p(used_amount).to(ing_unit)
+        used_amount = used_amount.m
+        return used_amount
 
-        # To DO: turn weight in grams to ingredient amount units
 
+if __name__ == "__main__":
 
-
+    from server import app
+    connect_to_db(app)
+    print "Connected to DB."
 
 
 
