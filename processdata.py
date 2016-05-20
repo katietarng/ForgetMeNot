@@ -37,7 +37,7 @@ def add_bookmark(user_id, recipe_id):
 
 
 def add_cooked_recipe(user_id, recipe_id, ingredients):
-    """Add cooked recipe and the used ingredients to database."""
+    """Add cooked recipe into database and update ingredient amounts."""
 
     used_recipe = UsedRecipe(user_id=user_id,
                              recipe_id=recipe_id)
@@ -53,63 +53,48 @@ def add_cooked_recipe(user_id, recipe_id, ingredients):
             if unit == "":
                 unit = "none"
 
-            # Check to see if the used ingredient is already in the table
-            used_ing = UsedIngredient.query.filter_by(name=name).first()
-
-            # If so, add the amount to used_ingredient
-            if used_ing:
-                used_ing.amount += amount
-            else:
-                used_ingredient = UsedIngredient(user_id=user_id,
-                                                 name=name,
-                                                 amount=amount,
-                                                 unit=unit)
-
-                db.session.add(used_ingredient)
-            db.session.commit()
+            update_ingredient_amount(user_id, name, unit, amount)
+            print "ingredient updated"
 
 
-def calculate_amount():
-    """Calculate new ingredient amount after ingredient has been used."""
+def update_ingredient_amount(user_id, name, unit, amount):
+    """Update new ingredient amount after ingredient has been used."""
 
-    # user_id = session.get('user_id', None)
-    user_id = 1
-    used_ings = UsedIngredient.query.filter_by(user_id=user_id).all()
+    ingredient = Ingredient.query.filter_by(name=name, user_id=user_id).first()
+    db_ing_unit = ingredient.unit
 
-    for used_ing in used_ings:
-        ingredient = Ingredient.query.filter_by(name=used_ing.name, user_id=user_id).first()
-        ing_unit = ingredient.unit
+    used_amount = convert_units(name, unit, amount, db_ing_unit)
+    amount = float("%0.2f" % (ingredient.amount - used_amount))
 
-        if used_ing.unit != ing_unit:
-            used_amount = convert_units(used_ing, ing_unit)
-            amount = float("%0.2f" % (ingredient.amount - used_amount))
-            print amount
-        else:
-            amount = ingredient.amount - used_ing.amount
-            print amount
-        db.session.query(Ingredient).filter_by(name=ingredient.name, user_id=user_id).update({Ingredient.amount: amount})
+    db.session.query(Ingredient).filter_by(name=ingredient.name, user_id=user_id).update({Ingredient.amount: amount})
 
     db.session.commit()
 
 
-def convert_units(used_ing, ing_unit):
+def convert_units(name, unit, amount, db_ing_unit):
     """Convert used ingredient unit to current ingredient unit."""
 
-    measurement = IngMeasurement.query.filter_by(name=used_ing.name).first()  # Query to see if ingredient is in measurements library
+    measurement = IngMeasurement.query.filter_by(name=name).first()  # Query to see if ingredient is in measurements library
 
-    # If volume to weight conversion exists in measurements table, run the calculation below
-    if measurement:
-        used_amount = str(used_ing.amount * measurement.gram)
-        used_amount += "gram"
-        used_amount = p(used_amount).to(ing_unit)
-        used_amount = used_amount.m  # Using the m method from the pint library to grab the value
+    # If unit of used ingredient in recipe matches the ingredient unit in fridge
+    if unit == db_ing_unit:
+        return amount
+
+    # If ingredient does not exist in the measurements table
+    if not measurement:
+        # Use try and except
+        used_amount = str(amount) + unit
+        used_amount = p(used_amount).to(ing_unit).m
         return used_amount
-    # If ingredient does not exist in measurements table, convert units
-    else:
-        used_amount = str(used_ing.amount + used_ing.unit)
-        used_amount = p(used_amount).to(ing_unit)
-        used_amount = used_amount.m
-        return used_amount
+
+    # If measurement unit does match used ingredient unit, run calculation
+    if measurement.vol_unit != unit:
+        used_amount = str(amount) + unit
+        used_amount = p(used_amount).to(measurement.vol_unit)
+
+    used_amount = str(amount * (float(measurement.gram)/measurement.volume)) + "gram"
+    used_amount = p(used_amount).to(db_ing_unit).m  # Using the m method from the pint library to grab the value
+    return used_amount
 
 
 if __name__ == "__main__":

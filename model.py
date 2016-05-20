@@ -79,32 +79,6 @@ class Ingredient(db.Model):
                                                                                                              self.input_date)
 
 
-class UsedIngredient(db.Model):
-    """Ingredient amount used for used recipe."""
-
-    __tablename__ = "used_ingredients"
-
-    ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    name = db.Column(db.String(70), nullable=False, unique=True)
-    amount = db.Column(db.Float, nullable=False)
-    unit = db.Column(db.String(20), nullable=True)
-    frequency = db.Column(db.Integer, nullable=True)  # Number of times ingredient has been used in recipes
-
-    user = db.relationship("User",
-                           backref=db.backref("used_ingredients", order_by=ingredient_id))
-
-    def __repr__(self):
-        """Print ingredients used in recipe."""
-
-        return "<Used Ingredient user_id={} ingredient_id={}, name={}, amount={}, unit={}, frequency={}>".format(self.user_id,
-                                                                                                                 self.ingredient_id,
-                                                                                                                 self.name,
-                                                                                                                 self.amount,
-                                                                                                                 self.unit,
-                                                                                                                 self.frequency)
-
-
 class UsedRecipe(db.Model):
     """Recipe that has been cooked before."""
 
