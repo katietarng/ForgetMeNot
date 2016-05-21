@@ -4,11 +4,13 @@ from model import *
 import inflect
 import json
 
+# ~~~~~~~~~~~~Spoonacular API request and responses~~~~~~~~~~~~~~
+
 # Initiate w as an object of the inflect module
 w = inflect.engine()
 
-#Dynamically pass in ingredients
-def recipe_request(ingredients):
+
+def recipe_request(ingredients, user_id):
     """Return a list of recipes that matches ingredient list."""
 
     url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients"
@@ -22,38 +24,25 @@ def recipe_request(ingredients):
         params={
             "fillIngredients": True,  # Adds information about used ingredients
             "ingredients": ingredients,  # List of ingredients as a string
-            "number": 15,  # Maximal number of recipes to return
+            "number": 30,  # Maximal number of recipes to return
             "ranking": 1  # Minimizes missing ingredients
         }
     )
 
     responses = request.body  # Returns a list of dictionaries that are recipes
-    recipes = []
-    used_ingredients = []
+    suggested_recipes = []
 
-    # Within one recipe starting from line 30
     for response in responses:
         recipe = {}
 
         used_ingredients = response.get("usedIngredients")  # Used ingredients is a list of dictionaries
         used_ingredients = [used_ingredient['name'] for used_ingredient in used_ingredients]
 
-        # Call recipe_info function below to return source URL and ingredients
         info = recipe_info(response['id'])
         source = info[0]
         ingredients = info[1]
 
-        ings = []
-        # Grab the ingredients that are used in the recipe and return the amount, unit used for that ingredient in the recipe
-        for ingredient in ingredients:
-            ing = {}
-            name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the actual ingredient
-
-            if name[-1] in used_ingredients:  # Check if used ingredient
-                ing["name"] = name[-1]
-                ing["amount"] = ingredient[1]
-                ing["unit"] = ingredient[2]
-                ings.append(ing)
+        ings = return_ingredient_list(ingredients, used_ingredients)
 
         recipe["recipe_id"] = response['id']
         recipe["image"] = response['image']
@@ -61,9 +50,35 @@ def recipe_request(ingredients):
         recipe["source"] = source
         recipe["ingredients"] = json.dumps({"used_ings": ings})
 
-        recipes.append(recipe)
+        # Check if a recipe has been cooked or bookmarked before
+        stored_id = Recipe.query.filter_by(user_id=user_id, recipe_id=response['id']).first()
 
-    return recipes
+        # If stored id is not None, continue to the next iteration
+        if stored_id:
+            continue
+
+        suggested_recipes.append(recipe)
+
+    return suggested_recipes
+
+
+def return_ingredient_list(ingredients, used_ingredients):
+    """Return ingredient list with name, amount, and unit."""
+    # Call recipe_info function to return source URL and ingredients
+
+    ings = []
+    # Grab the ingredients that are used in the recipe and return the amount, unit used for that ingredient in the recipe
+    for ingredient in ingredients:
+        ing = {}
+        name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the actual ingredient
+
+        if name[-1] in used_ingredients:  # Check if used ingredient
+            ing["name"] = name[-1]
+            ing["amount"] = ingredient[1]
+            ing["unit"] = ingredient[2]
+            ings.append(ing)
+
+    return ings
 
 
 def recipe_info(recipe_id):
@@ -82,9 +97,16 @@ def recipe_info(recipe_id):
 
     source = response.get("sourceUrl")
     ingredients = response.get("extendedIngredients")
+    ingredients = return_singular_form(ingredients)
+
+    recipe = (source, ingredients)
+    return recipe
+
+
+def return_singular_form(ingredients):
+    """Return singular form of ingredient."""
 
     ing = []
-
     for ingredient in ingredients:
         name = ingredient["name"]
         unit = ingredient["unit"].lower()
@@ -105,5 +127,4 @@ def recipe_info(recipe_id):
         ingredient = (name, ingredient["amount"], unit)
         ing.append(ingredient)
 
-    recipe = (source, ing)
-    return recipe
+    return ing

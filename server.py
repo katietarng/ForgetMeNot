@@ -191,8 +191,9 @@ def suggest_recipes():
     ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()  # Returns a list of tuples
     ingredients = ",".join([ingredient[0] for ingredient in ingredients])  # Creating a comma separated string (required for API argument)
 
-    recipes = recipe_request(ingredients)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
-    return render_template("recipes.html", recipes=recipes)
+    suggested_recipes = recipe_request(ingredients, user_id)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
+
+    return render_template("recipes.html", recipes=suggested_recipes)
 
 
 @app.route('/add-recipe.json', methods=["POST"])
@@ -217,25 +218,26 @@ def add_used_recipe():
     # If result of queries is not None, return the appropriate string
     if used_recipe:
         return "You have already cooked this recipe."
-    elif bookmarked_recipe:
+
+    if bookmarked_recipe:
         return "You have already bookmarked this recipe."
-    else:
-        #Instantiate recipe object of the Recipe class and add to table for referential integrity
-        recipe = Recipe(recipe_id=recipe_id,
-                        user_id=user_id,
-                        title=title,
-                        image_url=image,
-                        source_url=source)
 
-        db.session.add(recipe)
-        db.session.commit()
+    #Instantiate recipe object of the Recipe class and add to table for referential integrity
+    recipe = Recipe(recipe_id=recipe_id,
+                    user_id=user_id,
+                    title=title,
+                    image_url=image,
+                    source_url=source)
 
-        if button == "cook":
-            add_cooked_recipe(user_id, recipe_id, ingredients)
-        elif button == "bookmarks":
-            add_bookmark(user_id, recipe_id)
+    db.session.add(recipe)
+    db.session.commit()
 
-        return jsonify(id=recipe_id, button=button)
+    if button == "cook":
+        add_cooked_recipe(user_id, recipe_id, ingredients)
+    elif button == "bookmarks":
+        add_bookmark(user_id, recipe_id)
+
+    return jsonify(id=recipe_id, button=button)
 
 
 if __name__ == "__main__":

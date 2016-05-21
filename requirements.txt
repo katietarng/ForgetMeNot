@@ -10,11 +10,13 @@ Flask-DebugToolbar==0.10.0
 Flask-SQLAlchemy==2.1
 greenlet==0.4.9
 idna==2.1
+-e git+https://github.com/pwdyson/inflect.py@d4e57f041394bb246d8f9c360c20c19e44eeda03#egg=inflect
 ipaddress==1.0.16
 itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
 ndg-httpsclient==0.4.0
+Pint==0.7.2
 poster==0.8.1
 psycopg2==2.6.1
 pyasn1==0.1.9
@@ -24,6 +26,7 @@ pyOpenSSL==16.0.0
 requests==2.10.0
 six==1.10.0
 SQLAlchemy==1.0.12
+sympy==0.7.6.1
 Unirest==1.1.7
 wcwidth==0.1.6
 Werkzeug==0.11.9
