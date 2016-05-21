@@ -1,5 +1,5 @@
 from model import *
-import pint 
+import pint
 
 p = pint.UnitRegistry(system="US")
 
@@ -54,7 +54,6 @@ def add_cooked_recipe(user_id, recipe_id, ingredients):
                 unit = "none"
 
             update_ingredient_amount(user_id, name, unit, amount)
-            print "ingredient updated"
 
 
 def update_ingredient_amount(user_id, name, unit, amount):
@@ -64,7 +63,7 @@ def update_ingredient_amount(user_id, name, unit, amount):
     db_ing_unit = ingredient.unit
 
     used_amount = convert_units(name, unit, amount, db_ing_unit)
-    amount = float("%0.2f" % (ingredient.amount - used_amount))
+    amount = float("%0.2f" % (max(ingredient.amount - used_amount, 0)))  # If the ingredient goes negative, make the ingredient = 0
 
     db.session.query(Ingredient).filter_by(name=ingredient.name, user_id=user_id).update({Ingredient.amount: amount})
 
@@ -82,10 +81,12 @@ def convert_units(name, unit, amount, db_ing_unit):
 
     # If ingredient does not exist in the measurements table
     if not measurement:
-        # Use try and except
-        used_amount = str(amount) + unit
-        used_amount = p(used_amount).to(ing_unit).m
-        return used_amount
+        try:
+            used_amount = str(amount) + unit
+            used_amount = p(used_amount).to(ing_unit).m
+            return used_amount
+        except DimensionalityError:  # If the units are incompatible, do not update and return boolean
+            return None
 
     # If measurement unit does match used ingredient unit, run calculation
     if measurement.vol_unit != unit:
@@ -102,17 +103,3 @@ if __name__ == "__main__":
     from server import app
     connect_to_db(app)
     print "Connected to DB."
-
-
-
-
-
-
-
-
-
-
-
-
-
-

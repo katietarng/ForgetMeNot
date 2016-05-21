@@ -163,7 +163,8 @@ def add_new_ingredients():
 
             if current_ingredient:
                 amount += current_ingredient.amount
-                db.session.query(Ingredient).filter_by(user_id=user_id, name=name).update({Ingredient.amount: amount, Ingredient.unit: unit})
+                db.session.query(Ingredient).filter_by(user_id=user_id, name=name).update({Ingredient.amount: amount,
+                                                                                           Ingredient.unit: unit})
             else:
                 new_ingredient = Ingredient(user_id=user_id,
                                             name=ingredient[0],
@@ -234,7 +235,7 @@ def add_used_recipe():
         elif button == "bookmarks":
             add_bookmark(user_id, recipe_id)
 
-        return jsonify(id=recipe_id)
+        return jsonify(id=recipe_id, button=button)
 
 
 if __name__ == "__main__":

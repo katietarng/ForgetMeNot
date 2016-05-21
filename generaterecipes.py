@@ -34,14 +34,12 @@ def recipe_request(ingredients):
     # Within one recipe starting from line 30
     for response in responses:
         recipe = {}
-        recipe_id = response['id']
-        image_url = response['image']
-        title = response['title']
+
         used_ingredients = response.get("usedIngredients")  # Used ingredients is a list of dictionaries
         used_ingredients = [used_ingredient['name'] for used_ingredient in used_ingredients]
 
         # Call recipe_info function below to return source URL and ingredients
-        info = recipe_info(recipe_id)
+        info = recipe_info(response['id'])
         source = info[0]
         ingredients = info[1]
 
@@ -57,9 +55,9 @@ def recipe_request(ingredients):
                 ing["unit"] = ingredient[2]
                 ings.append(ing)
 
-        recipe["recipe_id"] = recipe_id
-        recipe["image"] = image_url
-        recipe["name"] = title
+        recipe["recipe_id"] = response['id']
+        recipe["image"] = response['image']
+        recipe["name"] = response['title']
         recipe["source"] = source
         recipe["ingredients"] = json.dumps({"used_ings": ings})
 

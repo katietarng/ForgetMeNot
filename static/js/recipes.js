@@ -1,8 +1,8 @@
 "use strict";
 
-function addUsedRecipe(evt) {
+function addRecipe(evt) {
 
-    var used = {
+    var recipe = {
         "button": $(this).attr("class"),
         "api_id": $(this).parent().attr("id"),
         "ingredients": $(this).siblings(".ingredients").html(),
@@ -11,44 +11,28 @@ function addUsedRecipe(evt) {
         "source": $(this).data("link")
     };
 
-    // Send AJAX post request to route with dictionary apiId
-    // Success function will change cook button to "cooked" or will tepmorarily let you know that you have cooked the recipe
+    sendServerRequest(recipe);
+}
+
+function sendServerRequest(recipe) {
+        
     $.post("/add-recipe.json",
-            used,
-            function (result) {
-                  if (result === "You have already cooked this recipe.") {
-                    alert(result);
-                } else {
-                    $("#" + result.id).find(".cook").html("Cooked");
-                    console.log("Inserted into db.");
-                }
-          }
-);}
-
-$('.cook').on('click', addUsedRecipe);
-
-function addToBookmarks (evt) {
-
-    var bookmarked = {
-        "button": $(this).attr("class"),
-        "api_id": $(this).parent().attr("id"),
-        "ingredients": $(this).siblings(".ingredients").html(),
-        "image": $(this).data("image"),
-        "title": $(this).data("name"),
-        "source": $(this).data("link")
-    };
-
-    $.post("/add-recipe.json",
-        bookmarked,
+        recipe,
         function (result) {
-            if (result === "You have already bookmarked this recipe") {
-                alert(result);
-            } else {
+              if (result.button === "cook") {
+                $("#" + result.id).find(".cook").html("Cooked");
+            } else if (result.button === "bookmark") {
                 $("#" + result.id).find(".bookmark").html("Bookmarked");
-                console.log("Inserted into db.");
+            } else {
+                alert(result);
             }
         });
 }
 
-$('.bookmarks').on('click', addToBookmarks);
+$('.cook').on('click', addRecipe);
+$('.bookmarks').on('click', addRecipe);
+
+
+
+
 

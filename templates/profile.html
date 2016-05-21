@@ -3,20 +3,42 @@
     
     <h1>Hello {{ name }}! Today's date is {{ date }}.</h1>
 
-    <form action="/add-ingredients" method="POST">
-        <label for="ingredients">Ingredients:<br>
-            <input type="text" name="ingredient"><br>
-            <input type="text" name="ingredient"><br>
-            <input type="text" name="ingredient">
-        </label><br>
-        <label for="amount">Amount:<br>
-            <input type="text" name="amount"><br>
-            <input type="text" name="amount"><br>
-            <input type="text" name="amount">
-        </label><br>
-        <label for="unit">Unit:<br>
+    <form action="/add-ingredients" method="POST" class="form-horizontal">
+        <div class="form-group">
+            <label for="ingredients">Ingredients:</label>
+                <div>
+                    <input type="text" class="ingredients" placeholder="Ingredient" />
+                </div>
+                <div>
+                    <input type="text" class="amount" placeholder="Amount" />
+                </div>
+                <div>
+                <select name="unit">
+                    <option value="none">N/A
+                    <option value="pound">pounds
+                    <option value="ounce">ounces
+                    <option value="gram">grams
+                    <option value="liter">liters
+                    <option value="gallon">gallons
+                    <option value="quart">quarts
+                    <option value="pint">pints
+                    <option value="cup">cups
+                </select>
+                </div>
+                <div>
+                    <button type="button" class="addButton">Add</button>
+                </div>
+            </label><br>
+        </div>
+        <div class="form-group" id="ingTemplate" hidden>
+            <div>
+                <input type="text" class="ingredients" placeholder="Ingredient" />
+            </div>
+            <div>
+                <input type="text" class="amount" placeholder="Amount" />
+            </div>
+            <div>
             <select name="unit">
-                <!-- Write a for loop to reference the units dict from processdata -->
                 <option value="none">N/A
                 <option value="pound">pounds
                 <option value="ounce">ounces
@@ -26,35 +48,12 @@
                 <option value="quart">quarts
                 <option value="pint">pints
                 <option value="cup">cups
-            </select><br>
-        <label for="unit">Unit:<br>
-            <select name="unit">
-                <!-- Write a for loop to reference the units dict from processdata -->
-                <option value="none">N/A
-                <option value="pound">pounds
-                <option value="ounce">ounces
-                <option value="gram">grams
-                <option value="liter">liters
-                <option value="gallon">gallons
-                <option value="quart">quarts
-                <option value="pint">pints
-                <option value="cup">cups
-            </select><br>
-        </label>
-        <label for="unit">Unit:<br>
-            <select name="unit">
-                <!-- Write a for loop to reference the units dict from processdata -->
-                <option value="none">N/A
-                <option value="pound">pounds
-                <option value="ounce">ounces
-                <option value="gram">grams
-                <option value="liter">liters
-                <option value="gallon">gallons
-                <option value="quart">quarts
-                <option value="pint">pints
-                <option value="cup">cups
-            </select><br>
-        </label>
+            </select>
+            </div>
+            <div>
+                <button type="button" class="removeButton">Remove</button>
+            </div>
+        </div>
         <br>
         <input type="submit">
     </form><br>
@@ -74,5 +73,9 @@
     <br>
     <a href="/recipes">Suggested Recipes</a><br>
     <a href="/logout">Logout</a>
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/static/js/profile.js"></script>
+
 
 {% endblock %}
