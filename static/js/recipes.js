@@ -16,13 +16,13 @@ function addRecipe(evt) {
 
 function sendServerRequest(recipe) {
         
-    $.post("/add-recipe.json",
+    $.get("/add-recipe.json",
         recipe,
         function (result) {
               if (result.button === "cook") {
                 $("#" + result.id).find(".cook").html("Cooked");
-            } else if (result.button === "bookmark") {
-                $("#" + result.id).find(".bookmark").html("Bookmarked");
+            } else if (result.button === "bookmarks") {
+                $("#" + result.id).find(".bookmarks").html("Bookmarked");
             } else {
                 alert(result);
             }

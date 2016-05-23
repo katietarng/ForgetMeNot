@@ -5,7 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
-from generaterecipes import recipe_request, recipe_info
+from generaterecipes import recipe_request, recipe_info, return_ingredient_list
 from processdata import return_current_ingredients, add_bookmark, add_cooked_recipe
 from model import *
 
@@ -196,33 +196,46 @@ def suggest_recipes():
     return render_template("recipes.html", recipes=suggested_recipes)
 
 
-@app.route('/add-recipe.json', methods=["POST"])
+@app.route('/bookmarks')
+def show_bookmarks():
+    """Show user a list of bookmarked recipes."""
+
+    user_id = session.get('user_id', None)
+
+    bookmarked = BookmarkedRecipe.query.filter_by(user_id=user_id).all()
+    current_ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()
+
+    bookmarks = []
+
+    for bookmark in bookmarked:
+        bookmarked_recipe = {}
+        bookmarked_recipe["recipe_id"] = bookmark.recipe_id
+        bookmarked_recipe["image"] = bookmark.recipe.image_url
+        bookmarked_recipe["title"] = bookmark.recipe.title
+        bookmarked_recipe["source"] = bookmark.recipe.source_url
+        bookmarked_recipe["ingredients"] = return_ingredient_list(bookmark.recipe_id,
+                                                                  current_ingredients)
+
+        bookmarks.append(bookmarked_recipe)
+
+    return render_template("storedrecipes.html", bookmarks=bookmarks)
+
+
+@app.route('/add-recipe.json', methods=["POST", "GET"])
 def add_used_recipe():
     """Add used or bookmarked recipes to database."""
     # Grab data passed in from AJAX call
     user_id = session.get('user_id', None)
-    button = request.form.get("button", None)
-    recipe_id = request.form.get("api_id", None)
-    image = request.form.get("image", None)
-    source = request.form.get("source", None)
-    title = request.form.get("title", None)
-    ingredients = request.form.get("ingredients", None)
+    button = request.args.get("button", None)
+    recipe_id = request.args.get("api_id", None)
+    image = request.args.get("image", None)
+    source = request.args.get("source", None)
+    title = request.args.get("title", None)
+    ingredients = request.args.get("ingredients", None)
 
     recipe_id = int(recipe_id)
     ingredients = json.loads(ingredients)  # Turn ingredient string into a dictionary
 
-    # Check if this recipe already exists in the used or bookmarked tables
-    used_recipe = UsedRecipe.query.filter_by(recipe_id=recipe_id).first()
-    bookmarked_recipe = BookmarkedRecipe.query.filter_by(recipe_id=recipe_id).first()
-
-    # If result of queries is not None, return the appropriate string
-    if used_recipe:
-        return "You have already cooked this recipe."
-
-    if bookmarked_recipe:
-        return "You have already bookmarked this recipe."
-
-    #Instantiate recipe object of the Recipe class and add to table for referential integrity
     recipe = Recipe(recipe_id=recipe_id,
                     user_id=user_id,
                     title=title,

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+    
+    {% if bookmarks %}
+        <h2>Bookmarked Recipes</h2>
+        {% for bookmark in bookmarks %}
+            <div class="recipe" id="{{ bookmark['recipe_id']}}">
+                <span class="recipeimage">
+                    <img src="{{ bookmark['image']}}">
+                </span>
+                <span class="recipename"><a href="{{ bookmark['source'] }}" target="_blank">{{ bookmark['title'] }}</a></span>
+                <br>
+                <button type="button" class="cook" data-image="{{ bookmark['image'] }}" data-link="{{ bookmark['source'] }}" data-name="{{ bookmark['title'] }}">Cook</button>
+                <br>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    
+{% endblock %}

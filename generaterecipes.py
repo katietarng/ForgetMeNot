@@ -13,6 +13,16 @@ w = inflect.engine()
 def recipe_request(ingredients, user_id):
     """Return a list of recipes that matches ingredient list."""
 
+    # Using the inflect module, change any plural ingredients into singular ingredients
+    ings = []
+    for ingredient in ingredients:
+        if ingredient[-1] == "s":
+            ingredient = w.singular_noun(ingredient, count=1)  # Setting count=1, allows it to return the singular form
+        else:
+            ingredient = w.singular_noun(ingredient, count=0)
+
+        ings.append(ingredient)
+
     url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients"
 
     request = unirest.get(
@@ -23,62 +33,16 @@ def recipe_request(ingredients, user_id):
         },
         params={
             "fillIngredients": True,  # Adds information about used ingredients
-            "ingredients": ingredients,  # List of ingredients as a string
+            "ingredients": ings,  # List of ingredients as a string
             "number": 30,  # Maximal number of recipes to return
             "ranking": 1  # Minimizes missing ingredients
         }
     )
 
     responses = request.body  # Returns a list of dictionaries that are recipes
-    suggested_recipes = []
 
-    for response in responses:
-        recipe = {}
-
-        used_ingredients = response.get("usedIngredients")  # Used ingredients is a list of dictionaries
-        used_ingredients = [used_ingredient['name'] for used_ingredient in used_ingredients]
-
-        info = recipe_info(response['id'])
-        source = info[0]
-        ingredients = info[1]
-
-        ings = return_ingredient_list(ingredients, used_ingredients)
-
-        recipe["recipe_id"] = response['id']
-        recipe["image"] = response['image']
-        recipe["name"] = response['title']
-        recipe["source"] = source
-        recipe["ingredients"] = json.dumps({"used_ings": ings})
-
-        # Check if a recipe has been cooked or bookmarked before
-        stored_id = Recipe.query.filter_by(user_id=user_id, recipe_id=response['id']).first()
-
-        # If stored id is not None, continue to the next iteration
-        if stored_id:
-            continue
-
-        suggested_recipes.append(recipe)
-
+    suggested_recipes = return_suggested_recipes(responses, user_id)
     return suggested_recipes
-
-
-def return_ingredient_list(ingredients, used_ingredients):
-    """Return ingredient list with name, amount, and unit."""
-    # Call recipe_info function to return source URL and ingredients
-
-    ings = []
-    # Grab the ingredients that are used in the recipe and return the amount, unit used for that ingredient in the recipe
-    for ingredient in ingredients:
-        ing = {}
-        name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the actual ingredient
-
-        if name[-1] in used_ingredients:  # Check if used ingredient
-            ing["name"] = name[-1]
-            ing["amount"] = ingredient[1]
-            ing["unit"] = ingredient[2]
-            ings.append(ing)
-
-    return ings
 
 
 def recipe_info(recipe_id):
@@ -101,6 +65,59 @@ def recipe_info(recipe_id):
 
     recipe = (source, ingredients)
     return recipe
+
+
+def return_suggested_recipes(responses, user_id):
+    """Return a list of suggested recipes that are not stored in the database."""
+
+    suggested_recipes = []
+
+    for response in responses:
+        recipe = {}
+
+        used_ingredients = response.get("usedIngredients")  # Used ingredients is a list of dictionaries
+        used_ingredients = [(used_ingredient['name'],) for used_ingredient in used_ingredients]
+
+        source = (recipe_info(response['id']))[0]
+        ings = return_ingredient_list(response['id'], used_ingredients)
+
+        recipe["recipe_id"] = response['id']
+        recipe["image"] = response['image']
+        recipe["name"] = response['title']
+        recipe["source"] = source
+        recipe["ingredients"] = json.dumps({"used_ings": ings})
+
+        # Check if a recipe has been cooked or bookmarked before
+        stored_id = Recipe.query.filter_by(user_id=user_id, recipe_id=response['id']).first()
+
+        # If stored id is not None, continue to the next iteration
+        if stored_id:
+            continue
+
+        suggested_recipes.append(recipe)
+
+    return suggested_recipes
+
+
+def return_ingredient_list(id, used_ingredients):
+    """Return ingredient list with name, amount, and unit."""
+
+    ingredients = (recipe_info(id))[1]
+
+    ings = []
+    # Grab the ingredients that are used in the recipe and return the amount, unit used for that ingredient in the recipe
+    for ingredient in ingredients:
+        ing = {}
+        name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the ingredient name
+
+        for used_ingredient in used_ingredients:
+            if name[-1] in used_ingredient[0]:  # Check if the ingredient is in the used ingredients list
+                ing["name"] = name[-1]
+                ing["amount"] = ingredient[1]
+                ing["unit"] = ingredient[2]
+                ings.append(ing)
+
+    return ings
 
 
 def return_singular_form(ingredients):
@@ -128,3 +145,5 @@ def return_singular_form(ingredients):
         ing.append(ingredient)
 
     return ing
+
+
