@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>Suggested Recipes</h1>
+
+<h1>Recipes</h1>
 
     {% if recipes %} 
         {% for recipe in recipes %}
@@ -12,9 +13,13 @@
                 <span class="recipename"><a href="{{ recipe['source'] }}" target="_blank">{{ recipe['name'] }}</a></span>
                 <span class="ingredients" hidden>{{ recipe['ingredients'] }}</span>
                 <br>
-                <button type="button" class="bookmarks" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Bookmark</button>
-                <button type="button" class="cook" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Cook</button>
-                <br>
+                {% if not recipe['bookmarked']%}
+                    <button type="button" class="btn btn-default bookmarks" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Bookmark</button>
+                    <button type="button" class="btn btn-default cook" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Cook</button>
+                {% else %}
+                    <button type="button" class="btn btn-default cook" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Cook</button>
+                    <br>
+                {% endif %}
             </div>
             <br>
        {% endfor %}

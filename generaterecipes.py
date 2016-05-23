@@ -13,16 +13,6 @@ w = inflect.engine()
 def recipe_request(ingredients, user_id):
     """Return a list of recipes that matches ingredient list."""
 
-    # Using the inflect module, change any plural ingredients into singular ingredients
-    ings = []
-    for ingredient in ingredients:
-        if ingredient[-1] == "s":
-            ingredient = w.singular_noun(ingredient, count=1)  # Setting count=1, allows it to return the singular form
-        else:
-            ingredient = w.singular_noun(ingredient, count=0)
-
-        ings.append(ingredient)
-
     url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients"
 
     request = unirest.get(
@@ -33,7 +23,7 @@ def recipe_request(ingredients, user_id):
         },
         params={
             "fillIngredients": True,  # Adds information about used ingredients
-            "ingredients": ings,  # List of ingredients as a string
+            "ingredients": ingredients,  # List of ingredients as a string
             "number": 30,  # Maximal number of recipes to return
             "ranking": 1  # Minimizes missing ingredients
         }
@@ -86,6 +76,7 @@ def return_suggested_recipes(responses, user_id):
         recipe["name"] = response['title']
         recipe["source"] = source
         recipe["ingredients"] = json.dumps({"used_ings": ings})
+        recipe["bookmarked"] = False
 
         # Check if a recipe has been cooked or bookmarked before
         stored_id = Recipe.query.filter_by(user_id=user_id, recipe_id=response['id']).first()
@@ -120,6 +111,26 @@ def return_ingredient_list(id, used_ingredients):
     return ings
 
 
+def return_stored_recipes(stored_recipes, current_ingredients, bookmark=False):
+    """Return recipes stored from database."""
+
+    recipes = []
+
+    for stored_recipe in stored_recipes:
+        recipe = {}
+        recipe["recipe_id"] = stored_recipe.recipe_id
+        recipe["image"] = stored_recipe.recipe.image_url
+        recipe["name"] = stored_recipe.recipe.title
+        recipe["source"] = stored_recipe.recipe.source_url
+        recipe["ingredients"] = return_ingredient_list(stored_recipe.recipe_id,
+                                                       current_ingredients)
+        recipe["bookmarked"] = bookmark
+
+        recipes.append(recipe)
+
+    return recipes
+
+
 def return_singular_form(ingredients):
     """Return singular form of ingredient."""
 
@@ -146,4 +157,8 @@ def return_singular_form(ingredients):
 
     return ing
 
+if __name__ == "__main__":
 
+    from server import app
+    connect_to_db(app)
+    print "Connected to DB."

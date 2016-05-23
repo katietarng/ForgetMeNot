@@ -5,7 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
-from generaterecipes import recipe_request, recipe_info, return_ingredient_list
+from generaterecipes import recipe_request, recipe_info, return_ingredient_list, return_stored_recipes
 from processdata import return_current_ingredients, add_bookmark, add_cooked_recipe
 from model import *
 
@@ -198,27 +198,31 @@ def suggest_recipes():
 
 @app.route('/bookmarks')
 def show_bookmarks():
-    """Show user a list of bookmarked recipes."""
+    """Show user their list of bookmarked recipes."""
 
     user_id = session.get('user_id', None)
 
     bookmarked = BookmarkedRecipe.query.filter_by(user_id=user_id).all()
     current_ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()
 
-    bookmarks = []
+    bookmark = True
+    bookmarked_recipes = return_stored_recipes(bookmarked, current_ingredients, bookmark)
 
-    for bookmark in bookmarked:
-        bookmarked_recipe = {}
-        bookmarked_recipe["recipe_id"] = bookmark.recipe_id
-        bookmarked_recipe["image"] = bookmark.recipe.image_url
-        bookmarked_recipe["title"] = bookmark.recipe.title
-        bookmarked_recipe["source"] = bookmark.recipe.source_url
-        bookmarked_recipe["ingredients"] = return_ingredient_list(bookmark.recipe_id,
-                                                                  current_ingredients)
+    return render_template("recipes.html", recipes=bookmarked_recipes)
 
-        bookmarks.append(bookmarked_recipe)
 
-    return render_template("storedrecipes.html", bookmarks=bookmarks)
+@app.route('/cooked-recipes')
+def show_cooked_recipes():
+    """Show user their list of cooked recipes."""
+
+    user_id = session.get('user_id', None)
+
+    cooked = UsedRecipe.query.filter_by(user_id=user_id).all()
+    current_ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()
+
+    cooked_recipes = return_stored_recipes(cooked, current_ingredients)
+
+    return render_template("recipes.html", recipes=cooked_recipes)
 
 
 @app.route('/add-recipe.json', methods=["POST", "GET"])
