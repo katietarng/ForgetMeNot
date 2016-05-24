@@ -19,12 +19,10 @@ function sendServerRequest(recipe) {
     $.get("/add-recipe.json",
         recipe,
         function (result) {
-              if (result.button === "cook") {
+              if (result.button === "btn btn-default cook") {
                 $("#" + result.id).find(".cook").html("Cooked");
-            } else if (result.button === "bookmarks") {
+            } else if (result.button === "btn btn-default bookmarks") {
                 $("#" + result.id).find(".bookmarks").html("Bookmarked");
-            } else {
-                alert(result);
             }
         });
 }

@@ -118,12 +118,14 @@ def return_stored_recipes(stored_recipes, current_ingredients, bookmark=False):
 
     for stored_recipe in stored_recipes:
         recipe = {}
+        ings = return_ingredient_list(stored_recipe.recipe_id,
+                                      current_ingredients)
+
         recipe["recipe_id"] = stored_recipe.recipe_id
         recipe["image"] = stored_recipe.recipe.image_url
         recipe["name"] = stored_recipe.recipe.title
         recipe["source"] = stored_recipe.recipe.source_url
-        recipe["ingredients"] = return_ingredient_list(stored_recipe.recipe_id,
-                                                       current_ingredients)
+        recipe["ingredients"] = json.dumps({"used_ings": ings})
         recipe["bookmarked"] = bookmark
 
         recipes.append(recipe)
@@ -156,9 +158,3 @@ def return_singular_form(ingredients):
         ing.append(ingredient)
 
     return ing
-
-if __name__ == "__main__":
-
-    from server import app
-    connect_to_db(app)
-    print "Connected to DB."

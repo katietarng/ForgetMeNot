@@ -3,7 +3,7 @@
     
     <h1>Hello {{ name }}! Today's date is {{ date }}.</h1>
 
-    <form action="/add-ingredients" method="POST" class="form-horizontal" id="ingForm" onSubmit="validateForm()">
+    <form action="/add-ingredients" method="POST" class="form-horizontal" id="ingForm">
         <!-- Form group is used for Bootstrap -->
         <div class="form-group">
             <label for="ingredients" class="col-xs-1 control-label">Ingredients:</label>
@@ -32,10 +32,10 @@
         </div>
         <div class="form-group" id="ingTemplate" hidden>
             <div class="col-xs-4 col-xs-offset-1">
-                <input type="text" class="form-control" placeholder="Ingredient" />
+                <input type="text" class="form-control" name="ingredient" placeholder="Ingredient" />
             </div>
             <div class="col-xs-4">
-                <input type="text" class="form-control" placeholder="Amount" />
+                <input type="text" class="form-control" name="amount" placeholder="Amount" />
             </div>
             <div class="col-xs-2">
                 <select class="form-control" name="unit">

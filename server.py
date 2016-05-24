@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from generaterecipes import recipe_request, recipe_info, return_ingredient_list, return_stored_recipes
-from processdata import return_current_ingredients, add_bookmark, add_cooked_recipe
+from processdata import return_current_ingredients, add_bookmark, update_cooked_recipe
 from model import *
 
 
@@ -141,10 +141,11 @@ def add_new_ingredients():
     user_id = session.get('user_id', None)
     user = User.query.get(user_id)
 
-    #Get the ingredients, amounts, and units from the form in the profile html
-    ingredients = request.form.getlist("ingredient", None)
-    amounts = request.form.getlist("amount", None)
-    units = request.form.getlist("unit", None)
+    # Get the ingredients, amounts, and units from the form in the profile html
+    # Slice up to second to last item because of hidden form template
+    ingredients = request.form.getlist("ingredient", None)[:-1]
+    amounts = request.form.getlist("amount", None)[:-1]
+    units = request.form.getlist("unit", None)[:-1]
 
     # Map function applies the int() function to the amounts list
     # which changes the amounts from a list of strings to a list of integers
@@ -240,18 +241,24 @@ def add_used_recipe():
     recipe_id = int(recipe_id)
     ingredients = json.loads(ingredients)  # Turn ingredient string into a dictionary
 
-    recipe = Recipe(recipe_id=recipe_id,
-                    user_id=user_id,
-                    title=title,
-                    image_url=image,
-                    source_url=source)
+    # Check if recipe is stored in the database
+    db_recipe = Recipe.query.filter_by(recipe_id=recipe_id, user_id=user_id).first()
 
-    db.session.add(recipe)
-    db.session.commit()
+    if db_recipe:
+        pass
+    else:
+        recipe = Recipe(recipe_id=recipe_id,
+                        user_id=user_id,
+                        title=title,
+                        image_url=image,
+                        source_url=source)
 
-    if button == "cook":
-        add_cooked_recipe(user_id, recipe_id, ingredients)
-    elif button == "bookmarks":
+        db.session.add(recipe)
+        db.session.commit()
+
+    if button == "btn btn-default cook":
+        update_cooked_recipe(user_id, recipe_id, ingredients)
+    elif button == "btn btn-default bookmarks":
         add_bookmark(user_id, recipe_id)
 
     return jsonify(id=recipe_id, button=button)

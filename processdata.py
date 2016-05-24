@@ -36,13 +36,19 @@ def add_bookmark(user_id, recipe_id):
     db.session.commit()
 
 
-def add_cooked_recipe(user_id, recipe_id, ingredients):
-    """Add cooked recipe into database and update ingredient amounts."""
+def update_cooked_recipe(user_id, recipe_id, ingredients):
+    """Update cooked recipe ingredient amounts and add to database if not there already."""
 
-    used_recipe = UsedRecipe(user_id=user_id,
-                             recipe_id=recipe_id)
-    db.session.add(used_recipe)
-    db.session.commit()
+    db_recipe = UsedRecipe.query.filter_by(recipe_id=recipe_id, user_id=user_id).first()
+
+    if db_recipe:
+        pass
+    else:
+        used_recipe = UsedRecipe(user_id=user_id,
+                                 recipe_id=recipe_id)
+
+        db.session.add(used_recipe)
+        db.session.commit()
 
     for key, value in ingredients.items():
         for ing in ingredients["used_ings"]:
@@ -63,11 +69,13 @@ def update_ingredient_amount(user_id, name, unit, amount):
     db_ing_unit = ingredient.unit
 
     used_amount = convert_units(name, unit, amount, db_ing_unit)
-    amount = float("%0.2f" % (max(ingredient.amount - used_amount, 0)))  # If the ingredient goes negative, make the ingredient = 0
 
-    db.session.query(Ingredient).filter_by(name=ingredient.name, user_id=user_id).update({Ingredient.amount: amount})
-
-    db.session.commit()
+    if used_amount:
+        amount = float("%0.2f" % (max(ingredient.amount - used_amount, 0)))  # If the ingredient goes negative, make the ingredient = 0
+        db.session.query(Ingredient).filter_by(name=ingredient.name, user_id=user_id).update({Ingredient.amount: amount})
+        db.session.commit()
+    else:
+        pass
 
 
 def convert_units(name, unit, amount, db_ing_unit):
@@ -83,18 +91,19 @@ def convert_units(name, unit, amount, db_ing_unit):
     if not measurement:
         try:
             used_amount = str(amount) + unit
-            used_amount = p(used_amount).to(ing_unit).m
+            used_amount = p(used_amount).to(db_ing_unit).m
             return used_amount
-        except DimensionalityError:  # If the units are incompatible, do not update and return boolean
+        except pint.DimensionalityError:  # If the units are incompatible, do not update and return boolean
             return None
 
     # If measurement unit does match used ingredient unit, run calculation
-    if measurement.vol_unit != unit:
+    if (measurement.vol_unit != unit) and (unit != "g" or "gram" or "grams"):
         used_amount = str(amount) + unit
         used_amount = p(used_amount).to(measurement.vol_unit)
 
     used_amount = str(amount * (float(measurement.gram)/measurement.volume)) + "gram"
     used_amount = p(used_amount).to(db_ing_unit).m  # Using the m method from the pint library to grab the value
+
     return used_amount
 
 
