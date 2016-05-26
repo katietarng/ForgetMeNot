@@ -1,7 +1,7 @@
 "use strict";
 
 function addRecipe(evt) {
-
+    
     var recipe = {
         "button": $(this).attr("class"),
         "api_id": $(this).parent().attr("id"),
@@ -26,6 +26,7 @@ function sendServerRequest(recipe) {
             }
         });
 }
+
 
 $('.cook').on('click', addRecipe);
 $('.bookmarks').on('click', addRecipe);

@@ -28,7 +28,7 @@ def return_current_ingredients(current_ingredients):
 
 
 def add_bookmark(user_id, recipe_id):
-    """Add bookmarked recipe to database."""
+    """Add bookmarked recipe to bookmarked_recipes table if it does not exist."""
 
     bookmarked_recipe = BookmarkedRecipe(user_id=user_id,
                                          recipe_id=recipe_id)
@@ -93,7 +93,7 @@ def convert_units(name, unit, amount, db_ing_unit):
             used_amount = str(amount) + unit
             used_amount = p(used_amount).to(db_ing_unit).m
             return used_amount
-        except pint.DimensionalityError:  # If the units are incompatible, do not update and return boolean
+        except (pint.DimensionalityError, pint.UndefinedUnitError):  # If the units are incompatible, do not update and return boolean
             return None
 
     # If measurement unit does match used ingredient unit, run calculation
@@ -112,3 +112,11 @@ if __name__ == "__main__":
     from server import app
     connect_to_db(app)
     print "Connected to DB."
+
+    import doctest
+    print
+    result = doctest.testmod()
+    if not result.failed:
+        print "All tests passed."
+    print
+

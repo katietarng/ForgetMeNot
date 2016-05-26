@@ -13,7 +13,7 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), nullable=False, unique=True)
     email = db.Column(db.String(65), nullable=False, unique=True)
-    password = db.Column(db.String(65), nullable=False)
+    password = db.Column(db.String(60), nullable=False)
     fname = db.Column(db.String(30), nullable=False)
     lname = db.Column(db.String(30), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
@@ -102,7 +102,7 @@ class BookmarkedRecipe(db.Model):
 
     bookmarked_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'), nullable=False, unique=True)
 
     user = db.relationship("User",
                            backref=db.backref("saved_recipes", order_by=bookmarked_recipe_id))
@@ -141,10 +141,22 @@ class Recipe(db.Model):
 #     __tablename__ = "groceries"
 
 #     grocery_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
 #     ingredient = db.Column(db.String(70), nullable=False)
 #     bill = db.Column(db.Float, nullable=True)
 #     shopping_date = db.Column(db.DateTime, nullable=True)
 
+#     user = db.relationship("User",
+#                            backref=db.backref("recipes", order_by=grocery_id))
+
+#     def __repr__(self):
+#         """Print grocery information."""
+
+#         return "<Grocery grocery_id={} user_id={} ingredient={} bill={} shopping_date={}>".format(self.grocery_id,
+#                                                                                                   self.user_id,
+#                                                                                                   self.ingredient,
+#                                                                                                   self.bill,
+#                                                                                                   self.shopping_date)
 
 ##############################################################################
 

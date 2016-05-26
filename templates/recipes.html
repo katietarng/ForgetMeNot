@@ -10,7 +10,7 @@
                 <span class="recipeimage">
                     <img src="{{ recipe['image']}}">
                 </span>
-                <span class="recipename"><a href="{{ recipe['source'] }}" target="_blank">{{ recipe['name'] }}</a></span>
+                <span class="recipename">{{ recipe['name'] }}</a></span>
                 <span class="ingredients" hidden>{{ recipe['ingredients'] }}</span>
                 <br>
                 {% if not recipe['bookmarked']%}
@@ -30,7 +30,7 @@
     <h4><a href="/">Profile</a>
     <h4><a href="/bookmarks">Bookmarks</a>
     <h4><a href="/cooked-recipes">Cooked Recipes</a></h4>
-        
+    
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="/static/js/recipes.js"></script>
 

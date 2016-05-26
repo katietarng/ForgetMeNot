@@ -3,6 +3,7 @@ import unirest
 from model import *
 import inflect
 import json
+from datetime import datetime
 
 # ~~~~~~~~~~~~Spoonacular API request and responses~~~~~~~~~~~~~~
 
@@ -32,6 +33,7 @@ def recipe_request(ingredients, user_id):
     responses = request.body  # Returns a list of dictionaries that are recipes
 
     suggested_recipes = return_suggested_recipes(responses, user_id)
+
     return suggested_recipes
 
 
@@ -66,7 +68,7 @@ def return_suggested_recipes(responses, user_id):
         recipe = {}
 
         used_ingredients = response.get("usedIngredients")  # Used ingredients is a list of dictionaries
-        used_ingredients = [(used_ingredient['name'],) for used_ingredient in used_ingredients]
+        used_ingredients = [(ingredient["name"],) for ingredient in used_ingredients]
 
         source = (recipe_info(response['id']))[0]
         ings = return_ingredient_list(response['id'], used_ingredients)
@@ -87,7 +89,7 @@ def return_suggested_recipes(responses, user_id):
 
         suggested_recipes.append(recipe)
 
-    return suggested_recipes
+    return (suggested_recipes)
 
 
 def return_ingredient_list(id, used_ingredients):
@@ -102,7 +104,7 @@ def return_ingredient_list(id, used_ingredients):
         name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the ingredient name
 
         for used_ingredient in used_ingredients:
-            if name[-1] in used_ingredient[0]:  # Check if the ingredient is in the used ingredients list
+            if name[-1] in used_ingredients[0]:
                 ing["name"] = name[-1]
                 ing["amount"] = ingredient[1]
                 ing["unit"] = ingredient[2]
@@ -158,3 +160,10 @@ def return_singular_form(ingredients):
         ing.append(ingredient)
 
     return ing
+
+
+if __name__ == "__main__":
+
+    from server import app
+    connect_to_db(app)
+    print "Connected to DB."

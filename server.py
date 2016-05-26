@@ -7,10 +7,12 @@ from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from generaterecipes import recipe_request, recipe_info, return_ingredient_list, return_stored_recipes
 from processdata import return_current_ingredients, add_bookmark, update_cooked_recipe
+from flask.ext.bcrypt import Bcrypt
 from model import *
 
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 app.secret_key = os.environ['APP_KEY']
 
@@ -59,6 +61,7 @@ def process_new_user():
     phone = request.form.get("phone")
 
     user = db.session.query(User).filter_by(username=username).first()
+    password = bcrypt.generate_password_hash(password)
 
     if user:
         flash("This username is taken.")
@@ -94,7 +97,7 @@ def process_login():
         flash("This email does not exist. Please sign up or try again.")
         return redirect("/")
 
-    if user.password != password:
+    if not bcrypt.check_password_hash(user.password, password):
         flash("Your password is incorrect.")
         return redirect("/")
 
@@ -194,7 +197,9 @@ def suggest_recipes():
 
     suggested_recipes = recipe_request(ingredients, user_id)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
 
-    return render_template("recipes.html", recipes=suggested_recipes)
+    return render_template("recipes.html",
+                           recipes=suggested_recipes,
+                           ingredients=ingredients)
 
 
 @app.route('/bookmarks')
@@ -262,6 +267,7 @@ def add_used_recipe():
         add_bookmark(user_id, recipe_id)
 
     return jsonify(id=recipe_id, button=button)
+
 
 
 if __name__ == "__main__":
