@@ -104,7 +104,7 @@ def return_ingredient_list(id, used_ingredients):
         name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the ingredient name
 
         for used_ingredient in used_ingredients:
-            if name[-1] in used_ingredients[0]:
+            if name[-1] in used_ingredient[0]:
                 ing["name"] = name[-1]
                 ing["amount"] = ingredient[1]
                 ing["unit"] = ingredient[2]
@@ -113,7 +113,7 @@ def return_ingredient_list(id, used_ingredients):
     return ings
 
 
-def return_stored_recipes(stored_recipes, current_ingredients, bookmark=False):
+def return_stored_recipes(stored_recipes, avail_ingredients, bookmark=False):
     """Return recipes stored from database."""
 
     recipes = []
@@ -121,7 +121,7 @@ def return_stored_recipes(stored_recipes, current_ingredients, bookmark=False):
     for stored_recipe in stored_recipes:
         recipe = {}
         ings = return_ingredient_list(stored_recipe.recipe_id,
-                                      current_ingredients)
+                                      db_ingredients)
 
         recipe["recipe_id"] = stored_recipe.recipe_id
         recipe["image"] = stored_recipe.recipe.image_url

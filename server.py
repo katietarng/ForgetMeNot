@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from generaterecipes import recipe_request, recipe_info, return_ingredient_list, return_stored_recipes
-from processdata import return_current_ingredients, add_bookmark, update_cooked_recipe
+from processdata import return_db_ingredients, add_bookmark, update_cooked_recipe
 from flask.ext.bcrypt import Bcrypt
 from model import *
 
@@ -28,15 +28,18 @@ def index():
 
     if user_id:
         user = User.query.get(user_id)
-        current_ingredients = Ingredient.query.filter_by(user_id=user.user_id).all()
-        current_ingredients = return_current_ingredients(current_ingredients)
+        avail_ingredients = Ingredient.query.filter_by(user_id=user.user_id).all()
+        avail_ing = Ingredient.query.filter(Ingredient.user_id == user.user_id, Ingredient.amount > 0).all()
+        avail_ing = return_db_ingredients(avail_ing)
+        depleted_ing = db.session.query(Ingredient.name).filter_by(user_id=user.user_id, amount=0).all()
         name = user.fname
         date = datetime.now()
         date = date.strftime("%B %d, %Y")
         return render_template("profile.html",
                                name=name,
                                date=date,
-                               current_ingredients=current_ingredients
+                               avail_ing=avail_ing,
+                               depleted_ing=depleted_ing
                                )
 
     return render_template("homepage.html")
@@ -121,9 +124,10 @@ def show_user_profile(username):
     """Show user profile."""
 
     user = db.session.query(User).filter_by(username=username).one()
-    current_ingredients = Ingredient.query.filter_by(user_id=user.user_id).all()
+    avail_ing = Ingredient.query.filter(Ingredient.user_id == user.user_id, Ingredient.amount > 0).all()
+    avail_ing = return_db_ingredients(avail_ing)
 
-    current_ingredients = return_current_ingredients(current_ingredients)  # Calling helper function to return a list of dictionaries that are current ingredients
+    depleted_ing = db.session.query(Ingredient.name).filter_by(user_id=user.user_id, amount=0).all()
 
     name = user.fname
     date = datetime.now()
@@ -132,7 +136,8 @@ def show_user_profile(username):
     return render_template("profile.html",
                            name=name,
                            date=date,
-                           current_ingredients=current_ingredients
+                           avail_ing=avail_ing,
+                           depleted_ing=depleted_ing
                            )
 
 
@@ -163,10 +168,10 @@ def add_new_ingredients():
             amount = ingredient[1]
             unit = ingredient[2]
 
-            current_ingredient = db.session.query(Ingredient).filter_by(user_id=user_id, name=name).first()
+            db_ingredient = db.session.query(Ingredient).filter_by(user_id=user_id, name=name).first()
 
-            if current_ingredient:
-                amount += current_ingredient.amount
+            if db_ingredient:
+                amount += db_ingredient.amount
                 db.session.query(Ingredient).filter_by(user_id=user_id, name=name).update({Ingredient.amount: amount,
                                                                                            Ingredient.unit: unit})
             else:
@@ -192,14 +197,13 @@ def suggest_recipes():
     # Grab user_id from session
     user_id = session.get('user_id', None)
 
-    ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()  # Returns a list of tuples
-    ingredients = ",".join([ingredient[0] for ingredient in ingredients])  # Creating a comma separated string (required for API argument)
+    avail_ingredients = db.session.query(Ingredient.name).filter(Ingredient.user_id == user_id, Ingredient.amount > 0).all()  # Returns a list of tuples
+    avail_ingredients = ",".join([ingredient[0] for ingredient in avail_ingredients])  # Creating a comma separated string (required for API argument)
 
-    suggested_recipes = recipe_request(ingredients, user_id)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
+    suggested_recipes = recipe_request(avail_ingredients, user_id)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
 
     return render_template("recipes.html",
-                           recipes=suggested_recipes,
-                           ingredients=ingredients)
+                           recipes=suggested_recipes)
 
 
 @app.route('/bookmarks')
@@ -209,10 +213,10 @@ def show_bookmarks():
     user_id = session.get('user_id', None)
 
     bookmarked = BookmarkedRecipe.query.filter_by(user_id=user_id).all()
-    current_ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()
+    avail_ingredients = db.session.query(Ingredient.name).filter(Ingredient.user_id == user_id, Ingredient.amount > 0).all()
 
     bookmark = True
-    bookmarked_recipes = return_stored_recipes(bookmarked, current_ingredients, bookmark)
+    bookmarked_recipes = return_stored_recipes(bookmarked, avail_ingredients, bookmark)
 
     return render_template("recipes.html", recipes=bookmarked_recipes)
 
@@ -224,9 +228,9 @@ def show_cooked_recipes():
     user_id = session.get('user_id', None)
 
     cooked = UsedRecipe.query.filter_by(user_id=user_id).all()
-    current_ingredients = db.session.query(Ingredient.name).filter_by(user_id=user_id).all()
+    avail_ingredients = db.session.query(Ingredient.name).filter(Ingredient.user_id == user_id, Ingredient.amount > 0).all()
 
-    cooked_recipes = return_stored_recipes(cooked, current_ingredients)
+    cooked_recipes = return_stored_recipes(cooked, avail_ingredients)
 
     return render_template("recipes.html", recipes=cooked_recipes)
 
@@ -268,6 +272,16 @@ def add_used_recipe():
 
     return jsonify(id=recipe_id, button=button)
 
+
+@app.route('/groceries')
+def show_grocery_list():
+    """Show grocery list."""
+
+    user_id = session.get('user_id', None)
+
+    depleted_ing = db.session.query(Ingredient.name).filter_by(user_id=user_id, amount=0).all()
+
+    return render_template("groceries.html", groceries=depleted_ing)
 
 
 if __name__ == "__main__":

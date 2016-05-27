@@ -11,6 +11,10 @@ function addRecipe(evt) {
         "source": $(this).data("link")
     };
 
+    if ($(this).attr("class") === "btn btn-default cook") {
+        window.open($(this).data("link"), "_blank");
+    }
+
     sendServerRequest(recipe);
 }
 

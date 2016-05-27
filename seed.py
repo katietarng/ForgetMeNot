@@ -7,7 +7,7 @@ from server import app
 def load_measurements():
     """Load measurements from seed file into database."""
 
-    seed = open("seed_data.txt")
+    seed = open("data/seed_data.txt")
 
     for row in seed:
         row = row.rstrip()

@@ -6,11 +6,11 @@ p = pint.UnitRegistry(system="US")
 # ~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~~~~
 
 
-def return_current_ingredients(current_ingredients):
+def return_db_ingredients(db_ingredients):
     """Return a list of dictionaries containing ingredients."""
 
     ings = []
-    for ingredient in current_ingredients:
+    for ingredient in db_ingredients:
         ingredients = {}
 
         if ingredient.amount > 1 and ingredient.unit != "none":  # Pluralize the units
@@ -79,9 +79,10 @@ def update_ingredient_amount(user_id, name, unit, amount):
 
 
 def convert_units(name, unit, amount, db_ing_unit):
-    """Convert used ingredient unit to current ingredient unit."""
+    """Convert used ingredient unit to database ingredient unit."""
 
     measurement = IngMeasurement.query.filter_by(name=name).first()  # Query to see if ingredient is in measurements library
+    used_amount = str(amount) + unit  # Setting integer amount into a string and combining with the unit
 
     # If unit of used ingredient in recipe matches the ingredient unit in fridge
     if unit == db_ing_unit:
@@ -90,16 +91,20 @@ def convert_units(name, unit, amount, db_ing_unit):
     # If ingredient does not exist in the measurements table
     if not measurement:
         try:
-            used_amount = str(amount) + unit
             used_amount = p(used_amount).to(db_ing_unit).m
             return used_amount
         except (pint.DimensionalityError, pint.UndefinedUnitError):  # If the units are incompatible, do not update and return boolean
             return None
 
-    # If measurement unit does match used ingredient unit, run calculation
+    # If measurement unit does match used ingredient unit
     if (measurement.vol_unit != unit) and (unit != "g" or "gram" or "grams"):
-        used_amount = str(amount) + unit
         used_amount = p(used_amount).to(measurement.vol_unit)
+
+    if name == "milk":
+        amount *= measurement.volume
+        used_amount = str(amount) + unit
+        used_amount = p(used_amount).to(db_ing_unit).m
+        return used_amount
 
     used_amount = str(amount * (float(measurement.gram)/measurement.volume)) + "gram"
     used_amount = p(used_amount).to(db_ing_unit).m  # Using the m method from the pint library to grab the value

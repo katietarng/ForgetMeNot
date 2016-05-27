@@ -135,28 +135,27 @@ class Recipe(db.Model):
                                                                                           self.source_url)
 
 
-# class Grocery(db.Model):
-#     """Grocery list."""
+class Grocery(db.Model):
+    """Grocery list."""
 
-#     __tablename__ = "groceries"
+    __tablename__ = "groceries"
 
-#     grocery_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-#     ingredient = db.Column(db.String(70), nullable=False)
-#     bill = db.Column(db.Float, nullable=True)
-#     shopping_date = db.Column(db.DateTime, nullable=True)
+    grocery_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    bill = db.Column(db.Float, nullable=True)
+    shopping_date = db.Column(db.DateTime, nullable=True)
 
-#     user = db.relationship("User",
-#                            backref=db.backref("recipes", order_by=grocery_id))
+    user = db.relationship("User",
+                           backref=db.backref("groceries", order_by=grocery_id))
 
-#     def __repr__(self):
-#         """Print grocery information."""
+    def __repr__(self):
+        """Print grocery information."""
 
-#         return "<Grocery grocery_id={} user_id={} ingredient={} bill={} shopping_date={}>".format(self.grocery_id,
-#                                                                                                   self.user_id,
-#                                                                                                   self.ingredient,
-#                                                                                                   self.bill,
-#                                                                                                   self.shopping_date)
+        return "<Grocery grocery_id={} user_id={} ingredient={} bill={} shopping_date={}>".format(self.grocery_id,
+                                                                                                  self.user_id,
+                                                                                                  self.ingredient,
+                                                                                                  self.bill,
+                                                                                                  self.shopping_date)
 
 ##############################################################################
 
