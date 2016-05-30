@@ -60,7 +60,7 @@ class Ingredient(db.Model):
 
     ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    name = db.Column(db.String(70), nullable=False, unique=True)
+    name = db.Column(db.String(70), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     unit = db.Column(db.String(20), nullable=True)  # Units of measurement (ounces,liters,etc.)
     input_date = db.Column(db.DateTime, nullable=False)

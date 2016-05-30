@@ -37,7 +37,7 @@ def recipe_request(ingredients, user_id):
     return suggested_recipes
 
 
-def recipe_info(recipe_id):
+def recipe_info(recipe_id, used_ing):
     """Return recipe information for a single recipe."""
 
     url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/{}/information".format(recipe_id)
@@ -49,13 +49,19 @@ def recipe_info(recipe_id):
         }
     )
 
-    response = request.body  # Returns a single response
+    response = request.body
 
+    recipe = {}
     source = response.get("sourceUrl")
+    cooktime = response.get("readyInMinutes")
     ingredients = response.get("extendedIngredients")
     ingredients = return_singular_form(ingredients)
+    ingredients = return_ingredient_list(ingredients, used_ing)
 
-    recipe = (source, ingredients)
+    recipe["source"] = source
+    recipe["cooktime"] = cooktime
+    recipe["ingredients"] = json.dumps({"used_ings": ingredients})
+
     return recipe
 
 
@@ -67,18 +73,13 @@ def return_suggested_recipes(responses, user_id):
     for response in responses:
         recipe = {}
 
-        used_ingredients = response.get("usedIngredients")  # Used ingredients is a list of dictionaries
-        used_ingredients = [(ingredient["name"],) for ingredient in used_ingredients]
-
-        source = (recipe_info(response['id']))[0]
-        ings = return_ingredient_list(response['id'], used_ingredients)
+        used_ingredients = response.get("usedIngredients")
+        used_ingredients = [ingredient["name"] for ingredient in used_ingredients]
 
         recipe["recipe_id"] = response['id']
         recipe["image"] = response['image']
-        recipe["name"] = response['title']
-        recipe["source"] = source
-        recipe["ingredients"] = json.dumps({"used_ings": ings})
-        recipe["bookmarked"] = False
+        recipe["title"] = response['title']
+        recipe["ingredients"] = json.dumps({"used_ings": used_ingredients})
 
         # Check if a recipe has been cooked or bookmarked before
         stored_id = Recipe.query.filter_by(user_id=user_id, recipe_id=response['id']).first()
@@ -89,26 +90,23 @@ def return_suggested_recipes(responses, user_id):
 
         suggested_recipes.append(recipe)
 
-    return (suggested_recipes)
+    return suggested_recipes
 
 
-def return_ingredient_list(id, used_ingredients):
+def return_ingredient_list(ingredients, used_ingredients):
     """Return ingredient list with name, amount, and unit."""
 
-    ingredients = (recipe_info(id))[1]
-
     ings = []
-    # Grab the ingredients that are used in the recipe and return the amount, unit used for that ingredient in the recipe
+
     for ingredient in ingredients:
         ing = {}
         name = ingredient[0].split()  # Split the ingredient name if it is two words and grab the ingredient name
 
-        for used_ingredient in used_ingredients:
-            if name[-1] in used_ingredient[0]:
-                ing["name"] = name[-1]
-                ing["amount"] = ingredient[1]
-                ing["unit"] = ingredient[2]
-                ings.append(ing)
+        if name[-1] in used_ingredients:
+            ing["name"] = name[-1]
+            ing["amount"] = ingredient[1]
+            ing["unit"] = ingredient[2]
+            ings.append(ing)
 
     return ings
 
@@ -121,7 +119,7 @@ def return_stored_recipes(stored_recipes, avail_ingredients, bookmark=False):
     for stored_recipe in stored_recipes:
         recipe = {}
         ings = return_ingredient_list(stored_recipe.recipe_id,
-                                      db_ingredients)
+                                      avail_ingredients)
 
         recipe["recipe_id"] = stored_recipe.recipe_id
         recipe["image"] = stored_recipe.recipe.image_url

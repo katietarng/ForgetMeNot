@@ -5,7 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
-from generaterecipes import recipe_request, recipe_info, return_ingredient_list, return_stored_recipes
+from generate_recipes import recipe_request, return_stored_recipes, recipe_info
 from processdata import return_db_ingredients, add_bookmark, update_cooked_recipe
 from flask.ext.bcrypt import Bcrypt
 from model import *
@@ -249,6 +249,7 @@ def add_used_recipe():
 
     recipe_id = int(recipe_id)
     ingredients = json.loads(ingredients)  # Turn ingredient string into a dictionary
+    button = button.split()
 
     # Check if recipe is stored in the database
     db_recipe = Recipe.query.filter_by(recipe_id=recipe_id, user_id=user_id).first()
@@ -265,12 +266,30 @@ def add_used_recipe():
         db.session.add(recipe)
         db.session.commit()
 
-    if button == "btn btn-default cook":
+    if button[-1] == "cook":
         update_cooked_recipe(user_id, recipe_id, ingredients)
-    elif button == "btn btn-default bookmarks":
+    elif button[-1] == "bookmarks":
         add_bookmark(user_id, recipe_id)
 
     return jsonify(id=recipe_id, button=button)
+
+
+@app.route('/recipe-details.json', methods=["GET"])
+def return_recipe_details():
+
+    recipe_id = request.args.get("api_id", None)
+    ingredients = request.args.get("ingredients", None)
+    title = request.args.get("title", None)
+    image = request.args.get("image", None)
+
+    ingredients = json.loads(ingredients)
+
+    info = recipe_info(recipe_id, ingredients["used_ings"])
+
+    return jsonify(info=info,
+                   id=recipe_id,
+                   image=image,
+                   title=title)
 
 
 @app.route('/groceries')
@@ -281,7 +300,7 @@ def show_grocery_list():
 
     depleted_ing = db.session.query(Ingredient.name).filter_by(user_id=user_id, amount=0).all()
 
-    return render_template("groceries.html", groceries=depleted_ing)
+    return render_template("grocery_list.html", groceries=depleted_ing)
 
 
 if __name__ == "__main__":

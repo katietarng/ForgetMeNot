@@ -1,7 +1,10 @@
 from model import *
 import pint
+import inflect
 
 p = pint.UnitRegistry(system="US")
+# Initiate w as an object of the inflect module
+w = inflect.engine()
 
 # ~~~~~~~~~~~~~ HELPER FUNCTIONS ~~~~~~~~~~~~~~~~~~~
 
@@ -14,8 +17,7 @@ def return_db_ingredients(db_ingredients):
         ingredients = {}
 
         if ingredient.amount > 1 and ingredient.unit != "none":  # Pluralize the units
-            unit = ingredient.unit + "s"
-            ingredients["unit"] = unit
+            ingredients["unit"] = w.plural(ingredient.unit)
         else:
             ingredients["unit"] = ingredient.unit
 

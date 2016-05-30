@@ -7,31 +7,44 @@
     {% if recipes %} 
         {% for recipe in recipes %}
             <div class="recipe" id="{{ recipe['recipe_id']}}">
-                <span class="recipeimage">
+                <span class="recipe-image">
                     <img src="{{ recipe['image']}}">
                 </span>
-                <span class="recipename">{{ recipe['name'] }}</a></span>
+                <span class="recipename">{{ recipe['title'] }}</a></span>
                 <span class="ingredients" hidden>{{ recipe['ingredients'] }}</span>
                 <br>
-                {% if not recipe['bookmarked']%}
-                    <button type="button" class="btn btn-default bookmarks" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Bookmark</button>
-                    <button type="button" class="btn btn-default cook" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Cook</button>
-                {% else %}
-                    <button type="button" class="btn btn-default cook" data-image="{{ recipe['image'] }}" data-link="{{ recipe['source'] }}" data-name="{{ recipe['name'] }}">Cook</button>
-                    <br>
-                {% endif %}
+                <a class="btn btn-default details" data-image="{{ recipe['image'] }}" data-title="{{ recipe['title'] }}">See Details</a>
+
+                <div id="modal-{{ recipe['recipe_id'] }}" class="modal fade" role="dialog">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title"></h4>
+                        </div>
+                        <div class="modal-body">
+                            <image class="image" src="#">
+                            <div class="description">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default bookmarks" data-source="#">Bookmark</button>
+                            <button type="button" class="btn btn-default cook" data-source="#">Cook</button>
+                        </div>
+                    </div>
+                  </div>
+                </div>
             </div>
-            <br>
        {% endfor %}
     {% else %}
-        <h4>There are no suggested recipes. Please add ingredients to your profile.</h4>
+        <h4>There are no recipes to show.</h4>
     {% endif %}
 
     <h4><a href="/">Profile</a>
     <h4><a href="/bookmarks">Bookmarks</a>
     <h4><a href="/cooked-recipes">Cooked Recipes</a></h4>
     
-    <script src="http://code.jquery.com/jquery.js"></script>
     <script src="/static/js/recipes.js"></script>
 
 {% endblock %}
+

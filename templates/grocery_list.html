@@ -4,19 +4,25 @@
     <h1>Grocery List</h1> 
 
     {% if groceries %}
-        <form action="/groceries" method="POST" class="form-vertical" id="groceryForm">
-        <div class="form-group">
+        <form action="/groceries" method="POST" class="form-horiztonal" id="grocery-form">
+        <div class="form-group" id="current-groceries">
                 <div class="col-xs-4">
                     {% for grocery in groceries%}
                         {{ grocery[0] }}<br>
                     {% endfor %}
-                    <br>
-                       <textarea class="form-control" id="groceryInput" rows="3" placeholder="Groceries"></textarea>
-                       <br>
-                       <button type="button" class="btn btn-default addButton">Add To Grocery List</button>
                 </div>
-
-
+        </div>
+        <div class="form-group" id="add-groceries">
+                <div class="col-xs-4">
+                    <br>
+                       <textarea class="form-control" id="grocery-input" rows="3" placeholder="Groceries"></textarea>
+                       <br>
+                       <button type="button" class="btn btn-default addGroceryButton">Add To Grocery List</button>
+                </div>
+        </div>
     {% endif %}
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/static/js/profile.js"></script>
 
 {% endblock %}
