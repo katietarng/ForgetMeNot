@@ -1,22 +1,24 @@
 import unittest
-from generaterecipes import *
-from processdata import *
+from generate_recipes import *
+from process_data import *
 
 
 class ProcessDataTestCase(unittest.TestCase):
     """Running tests on process data helper functions."""
 
+    @classmethod
+    def setUpClass(cls):
+        db.create_all()
+
     def setUp(self):
         """Stuff to do before every test."""
 
-        # Get the Flask test client
+        super(ProcessDataTestCase, self).setUp()
+
         self.client = app.test_client()
         app.config['TESTING'] = True
 
-    def tearDown(self):
-        """Do at end of every test."""
-
-        db.session.close()
+        self.addCleanup(db.session.close)  # This method closes the session at the end of each test method and you do not need parantheses because it automatically calls the method
 
     def test_return_db_ingredients(self):
         DB_INGREDIENTS = Ingredient.query.filter_by(user_id=1, name="orange").all()
@@ -26,12 +28,10 @@ class ProcessDataTestCase(unittest.TestCase):
                                                                        'unit': 'none'}])
 
     def test_add_bookmark(self):
-        BOOKMARKED_RECIPE = BookmarkedRecipe.query.filter_by(user_id=1, bookmarked_recipe_id=1).one()
-
-        if BOOKMARKED_RECIPE:
-            return True
-
-        self.assertEqual(BOOKMARKED_RECIPE, True)
+     # Use factory boy to create a test user and a recipe id
+     # Check if the user has a bookmarked recipe first
+     # Call the add_bookmark function 
+     # Check to see if the bookmark has been added
 
 
 class GenerateRecipeTestCase(unittest.TestCase):

@@ -37,7 +37,7 @@ def recipe_request(ingredients, user_id):
     return suggested_recipes
 
 
-def recipe_info(recipe_id, used_ing):
+def recipe_info(recipe_id, used_ing=None):
     """Return recipe information for a single recipe."""
 
     url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/{}/information".format(recipe_id)
@@ -54,13 +54,16 @@ def recipe_info(recipe_id, used_ing):
     recipe = {}
     source = response.get("sourceUrl")
     cooktime = response.get("readyInMinutes")
-    ingredients = response.get("extendedIngredients")
-    ingredients = return_singular_form(ingredients)
-    ingredients = return_ingredient_list(ingredients, used_ing)
+
+    # Check to see if a used amount exists, if so, don't get the extended ingredients
+    if used_ing:
+        ingredients = response.get("extendedIngredients")
+        ingredients = return_singular_form(ingredients)
+        ingredients = return_ingredient_list(ingredients, used_ing)
+        recipe["ingredients"] = json.dumps({"used_ings": ingredients})
 
     recipe["source"] = source
     recipe["cooktime"] = cooktime
-    recipe["ingredients"] = json.dumps({"used_ings": ingredients})
 
     return recipe
 
@@ -79,6 +82,7 @@ def return_suggested_recipes(responses, user_id):
         recipe["recipe_id"] = response['id']
         recipe["image"] = response['image']
         recipe["title"] = response['title']
+        recipe["bookmarked"] = False
         recipe["ingredients"] = json.dumps({"used_ings": used_ingredients})
 
         # Check if a recipe has been cooked or bookmarked before
@@ -111,21 +115,24 @@ def return_ingredient_list(ingredients, used_ingredients):
     return ings
 
 
-def return_stored_recipes(stored_recipes, avail_ingredients, bookmark=False):
+def return_stored_recipes(stored_recipes, avail_ingredients, user_id, bookmark=False):
     """Return recipes stored from database."""
 
     recipes = []
 
+    avail_ingredients = [ingredients[0] for ingredients in avail_ingredients]
+    avail_ingredients = ",".join(avail_ingredients)
+
     for stored_recipe in stored_recipes:
         recipe = {}
-        ings = return_ingredient_list(stored_recipe.recipe_id,
-                                      avail_ingredients)
+
+        ingredients = (recipe_info(stored_recipe.recipe_id, avail_ingredients))["ingredients"]
 
         recipe["recipe_id"] = stored_recipe.recipe_id
         recipe["image"] = stored_recipe.recipe.image_url
-        recipe["name"] = stored_recipe.recipe.title
+        recipe["title"] = stored_recipe.recipe.title
         recipe["source"] = stored_recipe.recipe.source_url
-        recipe["ingredients"] = json.dumps({"used_ings": ings})
+        recipe["ingredients"] = ingredients
         recipe["bookmarked"] = bookmark
 
         recipes.append(recipe)

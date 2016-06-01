@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, flash, redirect, session, jso
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
 from generate_recipes import recipe_request, return_stored_recipes, recipe_info
-from processdata import return_db_ingredients, add_bookmark, update_cooked_recipe
+from process_data import return_db_ingredients, add_bookmark, update_cooked_recipe
 from flask.ext.bcrypt import Bcrypt
 from model import *
 
@@ -214,11 +214,11 @@ def show_bookmarks():
 
     bookmarked = BookmarkedRecipe.query.filter_by(user_id=user_id).all()
     avail_ingredients = db.session.query(Ingredient.name).filter(Ingredient.user_id == user_id, Ingredient.amount > 0).all()
-
     bookmark = True
-    bookmarked_recipes = return_stored_recipes(bookmarked, avail_ingredients, bookmark)
 
-    return render_template("recipes.html", recipes=bookmarked_recipes)
+    bookmarked_recipes = return_stored_recipes(bookmarked, avail_ingredients, user_id, bookmark)
+    return render_template("recipes.html",
+                           recipes=bookmarked_recipes)
 
 
 @app.route('/cooked-recipes')
@@ -230,15 +230,16 @@ def show_cooked_recipes():
     cooked = UsedRecipe.query.filter_by(user_id=user_id).all()
     avail_ingredients = db.session.query(Ingredient.name).filter(Ingredient.user_id == user_id, Ingredient.amount > 0).all()
 
-    cooked_recipes = return_stored_recipes(cooked, avail_ingredients)
+    cooked_recipes = return_stored_recipes(cooked, avail_ingredients, user_id)
 
-    return render_template("recipes.html", recipes=cooked_recipes)
+    return render_template("recipes.html",
+                           recipes=cooked_recipes)
 
 
 @app.route('/add-recipe.json', methods=["POST", "GET"])
 def add_used_recipe():
     """Add used or bookmarked recipes to database."""
-    # Grab data passed in from AJAX call
+
     user_id = session.get('user_id', None)
     button = request.args.get("button", None)
     recipe_id = request.args.get("api_id", None)
@@ -284,7 +285,12 @@ def return_recipe_details():
 
     ingredients = json.loads(ingredients)
 
-    info = recipe_info(recipe_id, ingredients["used_ings"])
+    if isinstance(ingredients["used_ings"][0], unicode):
+        info = recipe_info(recipe_id, ingredients["used_ings"])
+
+    if type(ingredients["used_ings"][0]) == dict:
+        info = recipe_info(recipe_id)
+        info["ingredients"] = json.dumps(ingredients)
 
     return jsonify(info=info,
                    id=recipe_id,

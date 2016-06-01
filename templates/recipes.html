@@ -28,8 +28,12 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default bookmarks" data-source="#">Bookmark</button>
-                            <button type="button" class="btn btn-default cook" data-source="#">Cook</button>
+                            {% if not recipe['bookmarked']%}
+                                <button type="button" class="btn btn-default bookmarks" data-source="#">Bookmark</button>
+                                <button type="button" class="btn btn-default cook" data-source="#">Cook</button>
+                            {% else %}
+                                <button type="button" class="btn btn-default cook" data-source="#">Cook</button>
+                            {% endif %}
                         </div>
                     </div>
                   </div>
