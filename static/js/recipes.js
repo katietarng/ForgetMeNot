@@ -77,6 +77,15 @@ $(function () {
     $('.cook')
         .on('click', addRecipe);
 
+    $(".recipe").slice(0, 5).show();
+    $("#load").click(function(e){
+        e.preventDefault();
+        $(".recipe:hidden").slice(0, 5).show();
+        if($(".recipe:hidden").length === 0){
+            $("#load").hide();
+        }
+    });
+
 });
 
 

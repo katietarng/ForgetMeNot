@@ -1,4 +1,7 @@
 {% extends 'base.html' %}
+{% block head %}
+    <link rel="stylesheet" href="/static/css/recipes.css">
+{% endblock %}
 
 {% block content %}
 
@@ -38,8 +41,7 @@
                 </div>
             </div>
        {% endfor %}
-       <a href="#" id="load-more">Load More</a>
-       <a href="#" id="show-less">Show Less</a>
+    <a href="#" id="load">Load More</a>
     {% else %}
         <h4>There are no recipes to show.</h4>
     {% endif %}
