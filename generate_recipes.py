@@ -56,7 +56,7 @@ def recipe_info(recipe_id, used_ing=None):
     cooktime = response.get("readyInMinutes")
 
     # Check to see if a used amount exists, if so, don't get the extended ingredients
-    if used_ing:
+    if used_ing: 
         ingredients = response.get("extendedIngredients")
         ingredients = return_singular_form(ingredients)
         ingredients = return_ingredient_list(ingredients, used_ing)

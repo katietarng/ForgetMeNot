@@ -236,7 +236,7 @@ def show_cooked_recipes():
                            recipes=cooked_recipes)
 
 
-@app.route('/add-recipe.json', methods=["POST", "GET"])
+@app.route('/add-recipe.json', methods=["GET"])
 def add_used_recipe():
     """Add used or bookmarked recipes to database."""
 
@@ -246,11 +246,11 @@ def add_used_recipe():
     image = request.args.get("image", None)
     source = request.args.get("source", None)
     title = request.args.get("title", None)
-    ingredients = request.args.get("ingredients", None)
+    ingredients = request.args.get("ing", None)
 
     recipe_id = int(recipe_id)
-    ingredients = json.loads(ingredients)  # Turn ingredient string into a dictionary
     button = button.split()
+    ingredients = json.loads(ingredients)
 
     # Check if recipe is stored in the database
     db_recipe = Recipe.query.filter_by(recipe_id=recipe_id, user_id=user_id).first()
@@ -288,7 +288,7 @@ def return_recipe_details():
     if isinstance(ingredients["used_ings"][0], unicode):
         info = recipe_info(recipe_id, ingredients["used_ings"])
 
-    if type(ingredients["used_ings"][0]) == dict:
+    if isinstance(ingredients["used_ings"][0], dict):
         info = recipe_info(recipe_id)
         info["ingredients"] = json.dumps(ingredients)
 

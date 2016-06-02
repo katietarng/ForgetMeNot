@@ -13,7 +13,7 @@
                 <span class="recipename">{{ recipe['title'] }}</a></span>
                 <span class="ingredients" hidden>{{ recipe['ingredients'] }}</span>
                 <br>
-                <a class="btn btn-default details" data-image="{{ recipe['image'] }}" data-title="{{ recipe['title'] }}">See Details</a>
+                <button class="btn btn-default details" data-image="{{ recipe['image'] }}" data-title="{{ recipe['title'] }}">See Details</button>
 
                 <div id="modal-{{ recipe['recipe_id'] }}" class="modal fade" role="dialog">
                   <div class="modal-dialog">
@@ -29,17 +29,17 @@
                         </div>
                         <div class="modal-footer">
                             {% if not recipe['bookmarked']%}
-                                <button type="button" class="btn btn-default bookmarks" data-source="#">Bookmark</button>
-                                <button type="button" class="btn btn-default cook" data-source="#">Cook</button>
-                            {% else %}
-                                <button type="button" class="btn btn-default cook" data-source="#">Cook</button>
+                                <button type="button" class="btn btn-default bookmarks" data-source="#" data-ing="#">Bookmark</button>
                             {% endif %}
+                            <button type="button" class="btn btn-default cook" data-source="#" data-ing="#">Cook</button>
                         </div>
                     </div>
                   </div>
                 </div>
             </div>
        {% endfor %}
+       <a href="#" id="load-more">Load More</a>
+       <a href="#" id="show-less">Show Less</a>
     {% else %}
         <h4>There are no recipes to show.</h4>
     {% endif %}
