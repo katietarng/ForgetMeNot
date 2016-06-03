@@ -13,14 +13,14 @@
 </head>
 <body>
 
-    {% set active_page = active_page|default('') -%}
 
-    {% if active_page in ['profile', 'recipes'] %}
+
+
         {% include 'navbarbase.html' %}
-    {% endif %}
+
 
     {% for flash in get_flashed_messages() %}
-      {{ flash }}
+      <div class="alert alert-success">{{ flash }}</div>
     {% endfor %}
     
     {% block content %}

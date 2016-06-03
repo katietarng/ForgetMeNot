@@ -1,0 +1,15 @@
+.box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.2) 5px 5px 10px 0px;
+}
+
+body {
+    padding-bottom: 200px;
+}
+
+.authentication-box {
+    width: 500px;
+    margin: 0 auto;
+}

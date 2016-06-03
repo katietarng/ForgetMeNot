@@ -4,7 +4,7 @@
     
 <div class="container-fluid">
     <h1>Hello {{ name }}! Today's date is {{ date }}.</h1>
-    <div class="row">
+
         <div class="col-md-6">
             <h2>Ingredients:</h2>
             <form action="/add-ingredients" method="POST" class="form-horizontal" id="ingForm">
@@ -66,7 +66,7 @@
             </form><br>
         </div>
 
-        <div id="ingredients" class="col-md-6">
+        <div id="ingredients" class="col-md-6 box">
             <div>
                 <h2>Current Ingredients:</h2>
                     {% if avail_ing %}
@@ -90,7 +90,7 @@
                 {% endif %}
         </div>
     </div>
-</div>
+
 
     <script src="/static/js/profile.js"></script>
 
