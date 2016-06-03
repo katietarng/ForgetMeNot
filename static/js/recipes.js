@@ -49,7 +49,6 @@ function addRecipe(evt) {
     if ($(this).attr("class") === "btn btn-default cook") {
         window.open($(this).data("source"), "_blank");
     }
-    console.log(recipe);
 
     sendServerRequest(recipe);
 }
@@ -85,6 +84,7 @@ $(function () {
             $("#load").hide();
         }
     });
+
 
 });
 

@@ -32,6 +32,7 @@ class ProcessDataTestCase(unittest.TestCase):
      # Check if the user has a bookmarked recipe first
      # Call the add_bookmark function 
      # Check to see if the bookmark has been added
+     pass
 
 
 class GenerateRecipeTestCase(unittest.TestCase):
