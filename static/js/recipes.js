@@ -77,10 +77,10 @@ $(function () {
     $('.cook')
         .on('click', addRecipe);
 
-    $(".recipe").slice(0, 5).show();
+    $(".recipe").slice(0, 5).css("display", "inline-block");
     $("#load").click(function(e){
         e.preventDefault();
-        $(".recipe:hidden").slice(0, 5).show();
+        $(".recipe:hidden").slice(0, 5).css("display", "inline-block");
         if($(".recipe:hidden").length === 0){
             $("#load").hide();
         }

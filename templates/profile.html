@@ -1,94 +1,96 @@
 {% extends 'base.html' %}
+{% set active_page = 'profile' %}
 {% block content %}
     
+<div class="container-fluid">
     <h1>Hello {{ name }}! Today's date is {{ date }}.</h1>
-
-    <form action="/add-ingredients" method="POST" class="form-horizontal" id="ingForm">
-        <!-- Form group is used for Bootstrap -->
-        <div class="form-group">
-            <label for="ingredients" class="col-xs-1 control-label">Ingredients:</label>
-                <div class="col-xs-4">
-                    <input type="text" class="form-control" name="ingredient" placeholder="Ingredient" />
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Ingredients:</h2>
+            <form action="/add-ingredients" method="POST" class="form-horizontal" id="ingForm">
+                <!-- Form group is used for Bootstrap -->
+                <div class="form-group">
+                    
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" name="ingredient" placeholder="Ingredient" />
+                    </div>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" name="amount" placeholder="Amount" />
+                    </div>
+                    <div class="col-xs-2">
+                        <select class="form-control" name="unit">
+                            <option value="none">N/A</option>
+                            <option value="pound">pounds</option>
+                            <option value="ounce">ounces</option>
+                            <option value="gram">grams</option>
+                            <option value="liter">liters</option>
+                            <option value="gallon">gallons</option>
+                            <option value="quart">quarts</option>
+                            <option value="pint">pints</option>
+                            <option value="cup">cups</option>
+                        </select>
+                    </div>
+                    <div class = "col-xs-1">
+                        <button type="button" class="btn btn-default addButton">
+                            <span class="glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-xs-4">
-                    <input type="text" class="form-control" name="amount" placeholder="Amount" />
+                <div class="form-group" id="ingTemplate" hidden>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" name="ingredient" placeholder="Ingredient" />
+                    </div>
+                    <div class="col-xs-4">
+                        <input type="text" class="form-control" name="amount" placeholder="Amount" />
+                    </div>
+                    <div class="col-xs-2">
+                        <select class="form-control" name="unit">
+                            <option value="none">N/A</option>
+                            <option value="pound">pounds</option>
+                            <option value="ounce">ounces</option>
+                            <option value="gram">grams</option>
+                            <option value="liter">liters</option>
+                            <option value="gallon">gallons</option>
+                            <option value="quart">quarts</option>
+                            <option value="pint">pints</option>
+                            <option value="cup">cups</option>
+                        </select>
+                    </div>
+                    <div class = "col-xs-1">
+                        <button type="button" class="btn btn-default removeButton">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </button>
+                    </div>
                 </div>
-                <div class="col-xs-2">
-                    <select class="form-control" name="unit">
-                        <option value="none">N/A</option>
-                        <option value="pound">pounds</option>
-                        <option value="ounce">ounces</option>
-                        <option value="gram">grams</option>
-                        <option value="liter">liters</option>
-                        <option value="gallon">gallons</option>
-                        <option value="quart">quarts</option>
-                        <option value="pint">pints</option>
-                        <option value="cup">cups</option>
-                    </select>
-                </div>
-                <div class = "col-xs-1">
-                    <button type="button" class="btn btn-default addButton">
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </button>
-                </div>
+                <input type="submit" class="btn btn-primary">
+            </form><br>
         </div>
-        <div class="form-group" id="ingTemplate" hidden>
-            <div class="col-xs-4 col-xs-offset-1">
-                <input type="text" class="form-control" name="ingredient" placeholder="Ingredient" />
-            </div>
-            <div class="col-xs-4">
-                <input type="text" class="form-control" name="amount" placeholder="Amount" />
-            </div>
-            <div class="col-xs-2">
-                <select class="form-control" name="unit">
-                    <option value="none">N/A</option>
-                    <option value="pound">pounds</option>
-                    <option value="ounce">ounces</option>
-                    <option value="gram">grams</option>
-                    <option value="liter">liters</option>
-                    <option value="gallon">gallons</option>
-                    <option value="quart">quarts</option>
-                    <option value="pint">pints</option>
-                    <option value="cup">cups</option>
-                </select>
-            </div>
-            <div class = "col-xs-1">
-                <button type="button" class="btn btn-default removeButton">
-                    <span class="glyphicon glyphicon-minus"></span>
-                </button>
-            </div>
-        </div>
-        <input type="submit" class="btn btn-primary">
-    </form><br>
 
-    <div id="ingredients">
-        <div>
-            <label for="avail-ingredients">Current Ingredients:<br>
-                {% if avail_ing %}
-                    {% for ingredient in avail_ing %}
-                        {% if ingredient["unit"] == "none" %}
-                            {{ ingredient["name"] }} {{ ingredient["amount"] }}<br>
-                        {% else %}
-                            {{ ingredient["name"] }} {{ ingredient["amount"] }} {{ ingredient["unit"] }}<br>
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                    You have no ingredients at the moment.<br>
+        <div id="ingredients" class="col-md-6">
+            <div>
+                <h2>Current Ingredients:</h2>
+                    {% if avail_ing %}
+                        {% for ingredient in avail_ing %}
+                            {% if ingredient["unit"] == "none" %}
+                                {{ ingredient["name"] }} {{ ingredient["amount"] }}<br>
+                            {% else %}
+                                {{ ingredient["name"] }} {{ ingredient["amount"] }} {{ ingredient["unit"] }}<br>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        You have no ingredients at the moment.<br>
+                    {% endif %}
+            </div>
+            <div>
+                {% if depleted_ing %}
+                <h2>Ingredients You Need to Buy:</h2>
+                        {% for ingredient in depleted_ing %}
+                            {{ ingredient[0] }}<br>
+                        {% endfor %}
                 {% endif %}
         </div>
-        <div>
-            {% if depleted_ing %}
-            <label for="depleted-ingredients">Ingredients You Need to Buy:<br>
-                    {% for ingredient in depleted_ing %}
-                        {{ ingredient[0] }}<br>
-                    {% endfor %}
-            {% endif %}
     </div>
-
-
-    <br>
-    <a href="/recipes">Suggested Recipes</a><br>
-    <a href="/logout">Logout</a>
+</div>
 
     <script src="/static/js/profile.js"></script>
 

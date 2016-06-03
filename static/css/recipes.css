@@ -1,0 +1,28 @@
+.recipe {
+    display:none;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+#load {
+    margin-top: 20px;
+}
+
+.recipe-image {
+    width: 400px;
+    height: 300px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+body {
+    padding-bottom: 200px;
+}
+
+.align-center {
+    text-align: center;
+}

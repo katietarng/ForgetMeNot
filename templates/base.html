@@ -9,12 +9,15 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
     {% block head %}
-        Put head content here.
     {% endblock %}
 </head>
 <body>
 
-    <hr>
+    {% set active_page = active_page|default('') -%}
+
+    {% if active_page in ['profile', 'recipes'] %}
+        {% include 'navbarbase.html' %}
+    {% endif %}
 
     {% for flash in get_flashed_messages() %}
       {{ flash }}

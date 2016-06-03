@@ -1,0 +1,28 @@
+
+<nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid"> 
+        <div class="navbar-header"> 
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-8" aria-expanded="false"> 
+                <span class="sr-only">Toggle navigation</span> 
+                <span class="icon-bar"></span> 
+                <span class="icon-bar"></span> 
+                <span class="icon-bar"></span> 
+            </button> 
+            <a class="navbar-brand" href="#">Recipe App</a> 
+        </div>  
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-8"> 
+            <ul class="nav navbar-nav pull-right"> 
+                <li class="dropdown{% if active_page == "recipes" %} active{% endif %}">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recipes <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="/recipes">Suggested Recipes</a></li>
+                    <li><a href="/bookmarks">Bookmarked Recipes</a></li>
+                    <li><a href="/cooked-recipes">Cooked Recipes</a></li>
+                  </ul>
+                </li>
+                <li{% if active_page == "profile" %} class="active"{% endif %}><a href="/">Profile</a></li> 
+                <li><a href="/logout">Log Out</a></li> 
+            </ul> 
+        </div> 
+    </div>
+</nav>
