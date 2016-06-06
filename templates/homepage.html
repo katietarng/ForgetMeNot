@@ -1,25 +1,27 @@
 {% extends 'base.html' %}
 {% block title %}ForgetMeNot{% endblock%}
 {% block content %}
-    <div id="homepage" style="background-image: url('/static/images/homepage.jpg')">
-        <div class="authentication-box">
-            <h3 class="login-labels">Login</h3>
-            <form action="/login" method="POST">
-                <div id="email">
-                    <label class="login-labels">Email:
-                        <input type="email" name="email" required>
-                    </label>
-                </div>
-                <div id="password">
-                    <label class="login-labels">Password:
-                        <input type="password" name="password" required>
-                    </label>
-                </div>
-                <div id="login">
-                    <input type="submit" class="btn btn-default" value="Log In">
-                </div>
-            </form>
-            <h4><a href="/register" id="register">Get Started</a></h4>
+    <div class="authentication">
+        <div class="jumbotron" id="jumb-box">
+            <div class="authentication-box">
+                <h3 class="login-labels">Login</h3>
+                <form action="/login" method="POST">
+                    <div id="email">
+                        <label class="login-labels">Email:
+                            <input type="email" name="email" required>
+                        </label>
+                    </div>
+                    <div id="password">
+                        <label class="login-labels">Password:
+                            <input type="password" name="password" required>
+                        </label>
+                    </div>
+                    <div id="login">
+                        <input type="submit" class="btn btn-default" value="Log In">
+                    </div>
+                </form>
+                <h4><a href="/register" id="register">Get Started</a></h4>
+            </div>
         </div>
     </div>
 {% endblock %}

@@ -28,6 +28,16 @@ input, select {
     right: 3px;
 }
 
+.authentication {
+    background-image: url('/static/images/homepage.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 .authentication-box {
     width: 500px;
     margin: 0 auto;
@@ -38,6 +48,13 @@ input, select {
     -webkit-font-smoothing: antialiased;
 }
 
+#jumb-box{
+    background-color: transparent;
+    color: white;
+    padding-top:150px;
+}
+
+/* NAVBAR */
 #navbar {
     color: #D1DBBD;
     margin-bottom: auto;
@@ -48,13 +65,6 @@ input, select {
     font-size: 30px;
     text-align: left;
     color: #66CCFF;
-}
-
-#homepage {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    width: 100%;
 }
 
 
