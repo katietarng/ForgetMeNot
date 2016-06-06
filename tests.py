@@ -1,55 +1,89 @@
 import unittest
-from generate_recipes import *
-from process_data import *
+import recipes
+from recipes import process_recipes
+from recipes import process_ingredients
+from model import User, IngMeasurement, Ingredient, UsedRecipe, BookmarkedRecipe, Recipe, connect_to_db, db
 
 
-class ProcessDataTestCase(unittest.TestCase):
-    """Running tests on process data helper functions."""
-
-    @classmethod
-    def setUpClass(cls):
-        db.create_all()
+class ProcessRecipes(unittest.TestCase):
 
     def setUp(self):
-        """Stuff to do before every test."""
 
-        super(ProcessDataTestCase, self).setUp()
+        def _mock_recipe_request(ingredients, user_id):
 
-        self.client = app.test_client()
-        app.config['TESTING'] = True
+            return [{'title': 'Apricot Glazed Apple Tart',
+                     'image': 'https://spoonacular.com/recipeImages/Apricot-Glazed-Apple-Tart-632660.jpg',
+                     'missedIngredientCount': 1,
+                     'usedIngredients': [{'aisle': 'Produce',
+                                          'image': 'https://spoonacular.com/cdn/ingredients_100x100/apple.jpg',
+                                          'name': 'apple'},
+                                         {'aisle': 'Baking',
+                                          'image': 'https://spoonacular.com/cdn/ingredients_100x100/white-sugar.jpg',
+                                          'name': 'sugar'},
+                                         {'aisle': 'Baking',
+                                          'image': 'https://spoonacular.com/cdn/ingredients_100x100/flour.png',
+                                          'name': 'flour'}],
+                     'likes': 3,
+                     'missedIngredients': [{'aisle': 'Nut butters, Jams, and Honey',
+                                            'image': 'https://spoonacular.com/cdn/ingredients_100x100/apricot-jam.jpg',
+                                            'name': 'apricot preserves'},
+                                           {'aisle': 'Spices and Seasonings',
+                                            'image': 'https://spoonacular.com/cdn/ingredients_100x100/cinnamon.jpg',
+                                            'name': 'cinnamon'},
+                                           {'aisle': 'Milk, Eggs, Other Dairy',
+                                            'image': 'https://spoonacular.com/cdn/ingredients_100x100/butter.png',
+                                            'name': 'butter'}],
+                     'usedIngredientCount': 3,
+                     'id': 632660,
+                     'imageType': 'jpg'
+                     }]
 
-        self.addCleanup(db.session.close)  # This method closes the session at the end of each test method and you do not need parantheses because it automatically calls the method
+        def _mock_recipe_info(recipe_id, used_ing=None):
 
-    def test_return_db_ingredients(self):
-        DB_INGREDIENTS = Ingredient.query.filter_by(user_id=1, name="orange").all()
+            return {'source': 'http://www.foodista.com/recipe/JVKTLG23/apricot-glazed-apple-tart',
+                    'cooktime': 45,
+                    'ingredients': '{"used_ings": [{"amount": 4.0, "name": "apple", "unit": ""}, {"amount": 1.5, "name": "flour", "unit": "cup"}, {"amount": 3.5, "name": "sugar", "unit": "tablespoon"}]}'
+                    }
 
-        self.assertEqual(return_current_ingredients(DB_INGREDIENTS), [{'amount': 7.0,
-                                                                       'name': 'orange',
-                                                                       'unit': 'none'}])
+        self._old_recipe_request = process_recipes.recipe_request
+        process_recipes.recipe_request = _mock_recipe_request
 
-    def test_add_bookmark(self):
-     # Use factory boy to create a test user and a recipe id
-     # Check if the user has a bookmarked recipe first
-     # Call the add_bookmark function 
-     # Check to see if the bookmark has been added
-     pass
+        self._old_recipe_info = process_recipes.recipe_info
+        process_recipes.recipe_info = _mock_recipe_info
+
+        self.user_id = 1
+
+    def tearDown(self):
+
+        process_recipes.recipe_request = self._old_recipe_request
+        process_recipes.recipe_info = self._old_recipe_info
+
+    def test_return_suggested_recipes(self):
+
+        user_id = 1
+        process_recipes.recipe_request = _mock_recipe_request
+        self.assertEqual(process_recipes.return_suggested_recipes(_mock_recipe_request, user_id), [{'bookmarked': False,
+                                                                                                   'image': 'http://www.foodista.com/recipe/JVKTLG23/apricot-glazed-apple-tart',
+                                                                                                   'recipe_id': 632660,
+                                                                                                   'ingredients': '{"used_ings": ["apple", "flour", "sugar"]}',
+                                                                                                   'title': 'Apricot Glazed Apple Tart'
+                                                                                                   }])
 
 
-class GenerateRecipeTestCase(unittest.TestCase):
+class Process_Ingredients(unittest.TestCase):
 
     def test_return_singular_form(self):
         INGREDIENTS = [{"name": "apples", "amount": 5, "unit": ""},
                        {"name": "sugar", "amount": 4, "unit": "cups"}]
 
-        self.assertEqual(return_singular_form(INGREDIENTS), [("apple", 5, ""),
-                                                             ("sugar", 4, "cup")])
+        self.assertEqual(process_ingredients.return_singular_form(INGREDIENTS), [("apple", 5, ""),
+                                                                                 ("sugar", 4, "cup")])
 
 
 ##############################################################################
 
 def connect_to_db(app):
     """Connect the database to our Flask app."""
-
     # Configure to use PostgreSQL database
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///examplerecipes'
     db.app = app

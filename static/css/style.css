@@ -9,7 +9,52 @@ body {
     padding-bottom: 200px;
 }
 
+input, select {
+    color: black;
+}
+
+#email {
+    position: relative;
+    right: 12px;
+}
+
+#password {
+    position: relative;
+    right: 27px;
+}
+
+#register {
+    position: relative;
+    right: 3px;
+}
+
 .authentication-box {
     width: 500px;
     margin: 0 auto;
+    background-color: transparent;
+    text-align: center;
+    color: white;
+    vertical-align: middle;
+    -webkit-font-smoothing: antialiased;
 }
+
+#navbar {
+    color: #D1DBBD;
+    margin-bottom: auto;
+}
+
+#brand {
+    font-family: 'Lobster', cursive;
+    font-size: 30px;
+    text-align: left;
+    color: #66CCFF;
+}
+
+#homepage {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+}
+
+

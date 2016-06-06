@@ -19,10 +19,14 @@ function showDetails(e) {
             $("#modal-" + result.id).find(".modal-title").html(result.title);
             $("#modal-" + result.id).find(".modal-body .modal-image").css("background-image", "url('" + result.image + "')");
             $("#modal-" + result.id).find(".modal-body .description").html(recipeHtml);
+
             $("#modal-" + result.id).find(".cook").attr("data-source", result.info.source);
             $("#modal-" + result.id).find(".cook").attr("data-ing", result.info.ingredients);
+            $("#modal-" + result.id).find(".cook").attr("data-image", result.image);
+
             $("#modal-" + result.id).find(".bookmarks").attr("data-ing", result.info.ingredients);
             $("#modal-" + result.id).find(".bookmarks").attr("data-source", result.info.source);
+            $("#modal-" + result.id).find(".bookmarks").attr("data-image", result.image);
             
             var ingredients = (JSON.parse(result.info.ingredients)).used_ings;
                               $.each(ingredients, function (key, value) {
@@ -41,7 +45,7 @@ function addRecipe(evt) {
         "button": $(this).attr("class"),
         "api_id": $(this).closest('.recipe').attr('id'),
         "ing": JSON.stringify($(this).data("ing")),
-        "image": $(this).parent().siblings(".modal-body").find(".image").attr("src"),
+        "image": $(this).data("image"),
         "title": $(this).parent().siblings(".modal-header").find(".modal-title").html(),
         "source": $(this).data("source")
     };

@@ -1,32 +1,39 @@
 <!DOCTYPE html> 
 <html>
 <head>
-    <title>ForgetMeNot</title>
+    <title>{% block title %}{% endblock%}</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-    {% block head %}
-    {% endblock %}
+    {% block head %}{% endblock %}
 </head>
+
+<!-- BODY -->
 <body>
-
-
-
-
     {% include 'navbarbase.html' %}
-
-
-    {% for flash in get_flashed_messages() %}
-      <div class="alert alert-success">{{ flash }}</div>
-    {% endfor %}
-    
-    {% block content %}
-        Put body here.
-
-    {% endblock %}
-
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'success' %}
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ message }}
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ message }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}    
+    {% block content %}{% endblock %}
 </body>
+
+
 </html>

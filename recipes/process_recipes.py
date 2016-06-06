@@ -1,7 +1,7 @@
 import json
 import os
 import unirest
-from model import User, IngMeasurement, Ingredient, UsedRecipe, BookmarkedRecipe, Recipe, connect_to_db, db
+from model import UsedRecipe, BookmarkedRecipe, Recipe, connect_to_db, db
 from process_ingredients import update_ingredient_amount, return_ingredient_list, return_singular_form
 
 ################################################################################
@@ -31,9 +31,7 @@ def recipe_request(ingredients, user_id):
 
     responses = request.body  # Returns a list of dictionaries that are recipes
 
-    suggested_recipes = parse_api_recipes(responses, user_id)
-
-    return suggested_recipes
+    return responses
 
 
 def recipe_info(recipe_id, used_ing=None):
@@ -165,18 +163,7 @@ def update_cooked_recipe(user_id, recipe_id, ingredients):
             update_ingredient_amount(user_id, name, unit, amount)
 
 
-def return_suggested_recipes(user_id):
-    """Return a list of suggested recipes from the Spoonacular API."""
-
-    avail_ingredients = db.session.query(Ingredient.name).filter(Ingredient.user_id == user_id, Ingredient.amount > 0).all()  # Returns a list of tuples
-    avail_ingredients = ",".join([ingredient[0] for ingredient in avail_ingredients])  # Creating a comma separated string (required for API argument)
-
-    suggested_recipes = recipe_request(avail_ingredients, user_id)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
-
-    return suggested_recipes
-
-
-def parse_api_recipes(responses, user_id):
+def return_suggested_recipes(responses, user_id):
     """Return a list of recipes from the API that are not stored in the database."""
 
     recipes = []
@@ -205,6 +192,5 @@ def parse_api_recipes(responses, user_id):
     return recipes
 
 if __name__ == "__main__":
-
     from server import app
     connect_to_db(app)

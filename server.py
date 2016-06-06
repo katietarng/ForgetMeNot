@@ -5,7 +5,7 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 from flask.ext.bcrypt import Bcrypt
-from recipes.process_recipes import query_bookmarks, add_bookmark, return_stored_recipes, query_cooked_recipe, add_recipe, update_cooked_recipe, recipe_request, recipe_info
+from recipes.process_recipes import query_bookmarks, add_bookmark, return_stored_recipes, query_cooked_recipe, add_recipe, update_cooked_recipe, recipe_request, recipe_info, return_suggested_recipes
 from recipes.users import user_info, query_user_email, query_username, add_new_user
 from recipes.process_ingredients import return_avail_ingredients, return_depleted_ingredients, ingredient_names, add_ingredients, return_db_ingredients
 from model import User, IngMeasurement, Ingredient, UsedRecipe, BookmarkedRecipe, Recipe, connect_to_db, db
@@ -63,13 +63,13 @@ def process_new_user():
     password = bcrypt.generate_password_hash(password)
 
     if user:
-        flash("This username is taken.")
+        flash("This username is taken.", "error")
         return render_template("registration.html")
     else:
         new_user = add_new_user(username, email, password, fname, lname, phone)
-        session["user_id"] = new_user.new_user_id
+        session["user_id"] = new_user.user_id
 
-        flash("You have successfully signed up for an account!")
+        flash("You have successfully signed up for an account!", "success")
         return redirect('/profile/{}'.format(new_user.username))
 
 
@@ -83,16 +83,16 @@ def process_login():
     user = query_user_email(email)
 
     if not user:
-        flash("This email does not exist. Please sign up or try again.")
+        flash("This email does not exist. Please sign up or try again.", "error")
         return redirect("/")
 
     if not bcrypt.check_password_hash(user.password, password):
-        flash("Your password is incorrect.")
+        flash("Your password is incorrect.", "error")
         return redirect("/")
 
     session["user_id"] = user.user_id
 
-    flash("You are now logged in.")
+    flash("You are now logged in.", "success")
     return redirect("/profile/{}".format(user.username))
 
 
@@ -101,7 +101,7 @@ def logout():
     """Log out."""
 
     del session["user_id"]
-    flash("You have successfully logged out.")
+    flash("You have successfully logged out.", "success")
     return redirect("/")
 
 
@@ -135,7 +135,7 @@ def add_new_ingredients():
 
     add_ingredients(ingredients, amounts, units, user_id)
 
-    flash("You have successfully added the ingredients.")
+    flash("You have successfully added the ingredients.", "success")
 
     return redirect("/profile/{}".format(user.username))
 
@@ -147,10 +147,12 @@ def suggest_recipes():
     user_id = session.get('user_id', None)
     ingredients = ingredient_names(user_id)
     ingredients = ",".join([ingredient[0] for ingredient in ingredients])  # Creating a comma separated string (required for API argument)
-    suggested_recipes = recipe_request(ingredients, user_id)  # API request returns a dictionary with: id, image_url, recipe name, source, only the used ingredients and the amount
+    suggested_recipes = return_suggested_recipes(recipe_request(ingredients, user_id), user_id)
+    title = "Suggested Recipes"
 
     return render_template("recipes.html",
-                           recipes=suggested_recipes)
+                           recipes=suggested_recipes,
+                           title=title)
 
 
 @app.route('/bookmarks')
@@ -163,9 +165,11 @@ def show_bookmarks():
     ingredients = ingredient_names(user_id)
     bookmark = True
     bookmarked_recipes = return_stored_recipes(bookmarked, ingredients, user_id, bookmark)
+    title = "Bookmarked Recipes"
 
     return render_template("recipes.html",
-                           recipes=bookmarked_recipes)
+                           recipes=bookmarked_recipes,
+                           title=title)
 
 
 @app.route('/cooked-recipes')
@@ -177,12 +181,14 @@ def show_cooked_recipes():
     cooked = query_cooked_recipe(user_id)
     ingredients = ingredient_names(user_id)
     cooked_recipes = return_stored_recipes(cooked, ingredients, user_id)
+    title = "Cooked Recipes"
 
     return render_template("recipes.html",
-                           recipes=cooked_recipes)
+                           recipes=cooked_recipes,
+                           title=title)
 
 
-@app.route('/add-recipe.json', methods=["GET"])
+@app.route('/add-recipe.json', methods=["POST", "GET"])
 def add_used_recipe():
     """Add used or bookmarked recipes to database."""
 
@@ -204,7 +210,7 @@ def add_used_recipe():
     return jsonify(id=recipe_id, button=button)
 
 
-@app.route('/recipe-details.json', methods=["GET"])
+@app.route('/recipe-details.json', methods=["POST", "GET"])
 def return_recipe_details():
 
     recipe_id = request.args.get("api_id", None)
@@ -226,13 +232,10 @@ def return_recipe_details():
 
 
 if __name__ == "__main__":
-    # We have to set debug=True here, since it has to be True at the point
-    # that we invoke the DebugToolbarExtension
     app.debug = True
 
     connect_to_db(app)
 
-    # Use the DebugToolbar
     DebugToolbarExtension(app)
 
     app.run()

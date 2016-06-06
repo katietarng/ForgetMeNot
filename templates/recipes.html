@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
 {% set active_page = 'recipes' %}
 {% block head %}
     <link rel="stylesheet" href="/static/css/recipes.css">
@@ -7,7 +8,7 @@
 {% block content %}
 
 <div class="container-fluid">
-    <h1>Recipes</h1>
+    <h1>{{ title }}</h1>
 
         {% if recipes %} 
             {% for recipe in recipes %}
@@ -29,9 +30,9 @@
                             </div>
                             <div class="modal-footer">
                                 {% if not recipe['bookmarked']%}
-                                    <button type="button" class="btn btn-default bookmarks" data-source="#" data-ing="#">Bookmark</button>
+                                    <button type="button" class="btn btn-default bookmarks" data-source="#" data-ing="#" data-image="#">Bookmark</button>
                                 {% endif %}
-                                <button type="button" class="btn btn-default cook" data-source="#" data-ing="#">Cook</button>
+                                <button type="button" class="btn btn-default cook" data-source="#" data-ing="#", data-image="#">Cook</button>
                             </div>
                         </div>
                       </div>

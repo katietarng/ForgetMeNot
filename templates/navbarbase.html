@@ -1,15 +1,15 @@
 {% set active_page = active_page|default('') -%}
 
-<nav class="navbar navbar-default navbar-static-top">
+<nav class="navbar navbar-default navbar-static-top" id="navbar">
     <div class="container-fluid"> 
         <div class="navbar-header"> 
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-8" aria-expanded="false"> 
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-8" aria-expanded="false"> 
                 <span class="sr-only">Toggle navigation</span> 
                 <span class="icon-bar"></span> 
                 <span class="icon-bar"></span> 
                 <span class="icon-bar"></span> 
             </button> 
-            <a class="navbar-brand" href="#">Recipe App</a> 
+            <div class="navbar-brand" id="brand">ForgetMeNot</div> 
         </div>  
         {% if session.get('user_id') %}
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-8"> 

@@ -1,7 +1,7 @@
 import inflect
 import pint
 from datetime import datetime
-from model import User, IngMeasurement, Ingredient, UsedRecipe, BookmarkedRecipe, Recipe, connect_to_db, db
+from model import IngMeasurement, Ingredient, connect_to_db, db
 
 w = inflect.engine()
 p = pint.UnitRegistry(system="US")
@@ -114,6 +114,7 @@ def add_ingredients(ingredients, amounts, units, user_id):
 def update_ingredient_amount(user_id, name, unit, amount):
     """Update new ingredient amount after ingredient has been used."""
 
+    print name
     ingredient = Ingredient.query.filter_by(name=name, user_id=user_id).first()
     db_ing_unit = ingredient.unit
 
@@ -131,7 +132,6 @@ def update_ingredient_amount(user_id, name, unit, amount):
 #                          PROCESS INGREDIENT ATTRIBUTES                       #
 #                                                                              #
 ################################################################################
-
 
 
 def return_singular_form(ingredients):
@@ -195,6 +195,5 @@ def convert_units(name, unit, amount, db_ing_unit):
     return used_amount
 
 if __name__ == "__main__":
-
     from server import app
     connect_to_db(app)
