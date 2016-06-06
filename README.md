@@ -25,13 +25,11 @@ ForgetMeNot is a helpful web app created with the home cook in mind. Built to ke
 
 ## <a name="use"></a>How to use Meal Planner
 ###Profile
-___
 
 <!-- Add image here -->
 A user can input the ingredient name, amount, and units of the ingredients available in their fridge or pantry. Upon submission, the ingredients are updated in the database and posted into the "Current Ingredients" section. The page also contains a section with "Ingredients You Need to Buy", as the ingredient amounts are deducted each time a recipe is cooked. 
 
 ###Recipes
-___
 
 ####Suggested Recipes
 Users can view a list of suggested recipes based on the ingredients in their profile. The API minimizes the number of missing ingredients in each recipe to prevent users from having to run to the grocery store. If a user is interested in a particular recipe, they can click on the "See Details" button which shows the cooktime of a recipe, as well as, the amounts and units of the ingredients that match their profile.
@@ -48,7 +46,6 @@ When a user clicks on the "Cook" button in the overlay, an AJAX request is sent 
 
 
 ## <a name="use"></a>Installation and Running the Application
-___
 
 * Set up and activate a python virtualenv, and install all dependencies:
     * `pip install -r requirements.txt`
@@ -64,7 +61,6 @@ ___
 * Go to localhost:5000 to see the web app
 
 ## <a name="credits"></a>Credits
-___
 
 Credits to [Spoonacular's API](https://spoonacular.com/) for providing recipe information and [King Arthur Flour](http://www.kingarthurflour.com/learn/ingredient-weight-chart.html) for ingredient volume to weight conversions.
 
