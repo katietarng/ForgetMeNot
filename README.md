@@ -55,7 +55,7 @@ When a user chooses to bookmark or a cook a recipe, the recipe is saved to the l
 
 ![Ingredient Recipes](/static/images/Readme/screenshot-cooked.png)
 
-When a user clicks on the "Cook" button in the overlay, an AJAX request is sent back to the server, which then queries the database to check for an existing volume to weight conversion for that ingredient. The server then converts the ingredient unit to match the unit in their profile and deducts accordingly. If an ingredient is fully depleted, the ingredient will be shown under the "Ingredients You Need to Buy" section. If not, then the amount of the ingredient is updated in the "Current Ingredients" section.  
+When a user clicks on the "Cook" button in the overlay, an AJAX request is sent back to the server, which then queries the database to check for an existing volume to weight conversion for that ingredient. The server then converts the ingredient unit in the overlay to match the ingredient unit in their profile and deducts accordingly. If an ingredient is fully depleted, the ingredient will be shown under the "Ingredients You Need to Buy" section. If not, then the amount of the ingredient is updated in the "Current Ingredients" section.  
 
 ## <a name="use"></a>Local Installation and Running the Application
 
@@ -74,5 +74,7 @@ When a user clicks on the "Cook" button in the overlay, an AJAX request is sent 
 
 ## <a name="credits"></a>Credits
 
-Credits to [Spoonacular's API](https://spoonacular.com/) for providing recipe information and [King Arthur Flour](http://www.kingarthurflour.com/learn/ingredient-weight-chart.html) for ingredient volume to weight conversions.
+* Credits to [Spoonacular's API](https://spoonacular.com/) for providing recipe information
+* Credits to [King Arthur Flour](http://www.kingarthurflour.com/learn/ingredient-weight-chart.html) for ingredient volume to weight conversions.
+
 
