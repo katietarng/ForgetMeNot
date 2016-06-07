@@ -37,6 +37,7 @@ A user can input the ingredient name, amount, and units of the ingredients avail
 ####Suggested Recipes
 
 ![Suggested Recipes](/static/images/Readme/screenshot-suggested-recipes.png)
+-------------
 ![Suggested Recipes](/static/images/Readme/screenshot-recipe-details.png)
 
 Users can view a list of suggested recipes based on the ingredients in their profile. The API minimizes the number of missing ingredients in each recipe to prevent users from having to run to the grocery store. If a user is interested in a particular recipe, they can click on the "See Details" button which shows the cooktime of a recipe, as well as, the amounts and units of the ingredients that match their profile.
@@ -44,7 +45,7 @@ Users can view a list of suggested recipes based on the ingredients in their pro
 ####Bookmarked and Cooked Recipes
 
 ![Bookmarked Recipes](/static/images/Readme/screenshot-bookmark.png)
-
+-----------------
 ![Bookmarked Recipes](/static/images/Readme/screenshot-bookmark-cook.png)
 
 When a user chooses to bookmark or a cook a recipe, the recipe is saved to the local database and filtered out of the suggested recipe API response. The user can then access their bookmarks and cooked recipes through the navigation bar if they want to view the recipes they've cooked or bookmarked. Note that the user is able to re-cook a recipe again.
