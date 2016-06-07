@@ -25,7 +25,7 @@ ForgetMeNot is a helpful web app created with the home cook in mind. Built to ke
 
 (Dependencies are listed in requirements.txt)
 
-## <a name="use"></a>How to use Meal Planner
+## <a name="use"></a>How to use ForgetMeNot
 ###Profile
 
 
