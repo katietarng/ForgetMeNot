@@ -7,7 +7,7 @@ ForgetMeNot is a helpful web app created with the home cook in mind. Built to ke
 ## Table of Contents
 * [Technologies Used](#technologiesused)
 * [How to use ForgetMeNot](#use)
-* [Installation and Running the Application](#install)
+* [Local Installation and Running the Application](#install)
 * [Credits](#credits)
 
 ## <a name="technologiesused"></a>Technologies Used
@@ -28,26 +28,35 @@ ForgetMeNot is a helpful web app created with the home cook in mind. Built to ke
 ## <a name="use"></a>How to use ForgetMeNot
 ###Profile
 
+![Profile](/static/images/screenshot-profile.png)
 
 A user can input the ingredient name, amount, and units of the ingredients available in their fridge or pantry. Upon submission, the ingredients are updated in the database and posted into the "Current Ingredients" section. The page also contains a section with "Ingredients You Need to Buy", as the ingredient amounts are deducted each time a recipe is cooked. 
 
 ###Recipes
 
 ####Suggested Recipes
+
+![Suggested Recipes](/static/images/screenshot-suggested-recipes.png)
+![Suggested Recipes](/static/images/screenshot-recipe-details.png)
+
 Users can view a list of suggested recipes based on the ingredients in their profile. The API minimizes the number of missing ingredients in each recipe to prevent users from having to run to the grocery store. If a user is interested in a particular recipe, they can click on the "See Details" button which shows the cooktime of a recipe, as well as, the amounts and units of the ingredients that match their profile.
-<!-- Add image here -->
 
 ####Bookmarked and Cooked Recipes
-If a user were to bookmark or cook a recipe, the recipe would then be saved to the local database and filtered out of the suggested recipe API response. The user can access their bookmarks and cooked recipes through the navigation bar and have the functionality to cook all the recipes again. 
-<!-- Add image here -->
+
+![Bookmarked Recipes](/static/images/screenshot-bookmark.png)
+
+![Bookmarked Recipes](/static/images/screenshot-bookmark-cook.png)
+
+When a user chooses to bookmark or a cook a recipe, the recipe is saved to the local database and filtered out of the suggested recipe API response. The user can then access their bookmarks and cooked recipes through the navigation bar if they want to view the recipes they've cooked or bookmarked. Note that the user is able to re-cook a recipe again.
+
 
 ###Ingredient Unit Conversion
+
+![Ingredient Recipes](/static/images/screenshot-cooked.png)
+
 When a user clicks on the "Cook" button in the overlay, an AJAX request is sent back to the server, which then queries the database to check for an existing volume to weight conversion for that ingredient. The server then converts the ingredient unit to match the unit in their profile and deducts accordingly. If an ingredient is fully depleted, the ingredient will be shown under the "Ingredients You Need to Buy" section. If not, then the amount of the ingredient is updated in the "Current Ingredients" section.  
-<!-- Add image here -->
-<!-- Add image here -->
 
-
-## <a name="use"></a>Installation and Running the Application
+## <a name="use"></a>Local Installation and Running the Application
 
 * Set up and activate a python virtualenv, and install all dependencies:
     * `pip install -r requirements.txt`
