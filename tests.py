@@ -1,11 +1,9 @@
 import recipes
-import server
 
-from unittest import TestCase
-from server import app
+from unittest import TestCase, main
 from recipes import process_recipes
 from recipes import process_ingredients
-from model import User, IngMeasurement, Ingredient, UsedRecipe, BookmarkedRecipe, Recipe, connect_to_db, db
+from model import User, IngMeasurement, Ingredient, UsedRecipe, BookmarkedRecipe, Recipe, db
 
 
 class ProcessRecipes(TestCase):
@@ -88,26 +86,22 @@ class FlaskTestsLoggedIn(TestCase):
     def setUp(self):
         """Stuff to do before every test."""
 
-        app.config['TESTING'] = True
-        app.config['SECRET_KEY'] = 'key'
-
         self.client = app.test_client()
-        connect_to_db(app, "postgresql:///examplerecipes")
+        connect_to_db(app)
 
-        # Create tables and add sample data
-        db.drop_all()
-        db.create_all()
+        # db.drop_all()
+        # db.create_all()
 
         with self.client as c:
             with c.session_transaction() as sess:
                 sess['user_id'] = 1
 
-    def tearDown(self):
+    def test_homepage(self):
+        """Test profile page."""
 
-        db.session.close()
-        db.drop_all()
-
-    print "tearDown successfull"
+        result = self.client.get("/")
+        self.assertIn("Current Ingredients", result.data)
+        self.assertNotIn("Login", result.data)
 
 
 
@@ -116,5 +110,15 @@ class FlaskTestsLoggedIn(TestCase):
 
 ##############################################################################
 
+def connect_to_db(app):
+    """Connect the database to our Flask app."""
+    # Configure to use PostgreSQL database
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///examplerecipes'
+    db.app = app
+    db.init_app(app)
+
 if __name__ == "__main__":
+    from server import app
+    connect_to_db(app)
+    print "Connected to DB. "
     main()

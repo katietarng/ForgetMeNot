@@ -1,5 +1,7 @@
 #ForgetMeNot
 
+![ForgetMeNot](/static/images/screenshot-login.png)
+
 ForgetMeNot is a helpful web app created with the home cook in mind. Built to keep track of ingredient amounts a user has within their fridge or pantry, this web application keeps users aware of ingredients that are depleted. ForgetMeNot will also generate recipes for any given set of ingredients. Users have the functionality to bookmark or cook a recipe. Once a recipe is cooked, the ingredient amounts are automatically updated in the user’s profile to show how much of an ingredient is left. 
 
 ## Table of Contents
@@ -26,7 +28,7 @@ ForgetMeNot is a helpful web app created with the home cook in mind. Built to ke
 ## <a name="use"></a>How to use Meal Planner
 ###Profile
 
-<!-- Add image here -->
+
 A user can input the ingredient name, amount, and units of the ingredients available in their fridge or pantry. Upon submission, the ingredients are updated in the database and posted into the "Current Ingredients" section. The page also contains a section with "Ingredients You Need to Buy", as the ingredient amounts are deducted each time a recipe is cooked. 
 
 ###Recipes
