@@ -1,11 +1,14 @@
-import unittest
 import recipes
+import server
+
+from unittest import TestCase
+from server import app
 from recipes import process_recipes
 from recipes import process_ingredients
 from model import User, IngMeasurement, Ingredient, UsedRecipe, BookmarkedRecipe, Recipe, connect_to_db, db
 
 
-class ProcessRecipes(unittest.TestCase):
+class ProcessRecipes(TestCase):
 
     def setUp(self):
 
@@ -38,39 +41,38 @@ class ProcessRecipes(unittest.TestCase):
                      'imageType': 'jpg'
                      }]
 
-        def _mock_recipe_info(recipe_id, used_ing=None):
+        # def _mock_recipe_info(recipe_id, used_ing=None):
 
-            return {'source': 'http://www.foodista.com/recipe/JVKTLG23/apricot-glazed-apple-tart',
-                    'cooktime': 45,
-                    'ingredients': '{"used_ings": [{"amount": 4.0, "name": "apple", "unit": ""}, {"amount": 1.5, "name": "flour", "unit": "cup"}, {"amount": 3.5, "name": "sugar", "unit": "tablespoon"}]}'
-                    }
+        #     return {'source': 'http://www.foodista.com/recipe/JVKTLG23/apricot-glazed-apple-tart',
+        #             'cooktime': 45,
+        #             'ingredients': '{"used_ings": [{"amount": 4.0, "name": "apple", "unit": ""}, {"amount": 1.5, "name": "flour", "unit": "cup"}, {"amount": 3.5, "name": "sugar", "unit": "tablespoon"}]}'
+        #             }
 
         self._old_recipe_request = process_recipes.recipe_request
         process_recipes.recipe_request = _mock_recipe_request
 
-        self._old_recipe_info = process_recipes.recipe_info
-        process_recipes.recipe_info = _mock_recipe_info
-
-        self.user_id = 1
+        # self._old_recipe_info = process_recipes.recipe_info
+        # process_recipes.recipe_info = _mock_recipe_info
 
     def tearDown(self):
 
         process_recipes.recipe_request = self._old_recipe_request
-        process_recipes.recipe_info = self._old_recipe_info
+        # process_recipes.recipe_info = self._old_recipe_info
 
     def test_return_suggested_recipes(self):
+        INGREDIENTS = "apple,flour,sugar"
+        USER_ID = 1
 
-        user_id = 1
-        process_recipes.recipe_request = _mock_recipe_request
-        self.assertEqual(process_recipes.return_suggested_recipes(_mock_recipe_request, user_id), [{'bookmarked': False,
-                                                                                                   'image': 'http://www.foodista.com/recipe/JVKTLG23/apricot-glazed-apple-tart',
-                                                                                                   'recipe_id': 632660,
-                                                                                                   'ingredients': '{"used_ings": ["apple", "flour", "sugar"]}',
-                                                                                                   'title': 'Apricot Glazed Apple Tart'
-                                                                                                   }])
+        response = process_recipes.recipe_request(INGREDIENTS, USER_ID)
+        self.assertEqual(process_recipes.return_suggested_recipes(response, USER_ID), [{'bookmarked': False,
+                                                                                        'image': 'https://spoonacular.com/recipeImages/Apricot-Glazed-Apple-Tart-632660.jpg',
+                                                                                        'recipe_id': 632660,
+                                                                                        'ingredients': '{"used_ings": ["apple", "sugar", "flour"]}',
+                                                                                        'title': 'Apricot Glazed Apple Tart'
+                                                                                        }])
 
 
-class Process_Ingredients(unittest.TestCase):
+class Process_Ingredients(TestCase):
 
     def test_return_singular_form(self):
         INGREDIENTS = [{"name": "apples", "amount": 5, "unit": ""},
@@ -80,17 +82,39 @@ class Process_Ingredients(unittest.TestCase):
                                                                                  ("sugar", 4, "cup")])
 
 
+class FlaskTestsLoggedIn(TestCase):
+    """Flask tests with user logged in to session."""
+
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        app.config['TESTING'] = True
+        app.config['SECRET_KEY'] = 'key'
+
+        self.client = app.test_client()
+        connect_to_db(app, "postgresql:///examplerecipes")
+
+        # Create tables and add sample data
+        db.drop_all()
+        db.create_all()
+
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user_id'] = 1
+
+    def tearDown(self):
+
+        db.session.close()
+        db.drop_all()
+
+    print "tearDown successfull"
+
+
+
+
+
+
 ##############################################################################
 
-def connect_to_db(app):
-    """Connect the database to our Flask app."""
-    # Configure to use PostgreSQL database
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///examplerecipes'
-    db.app = app
-    db.init_app(app)
-
 if __name__ == "__main__":
-    from server import app
-    connect_to_db(app)
-    print "Connected to DB. "
-    unittest.main()
+    main()

@@ -5,13 +5,11 @@
     
 <div class="container-fluid">
     <h1>Hello {{ name }}! Today's date is {{ date }}.</h1>
-
-        <div class="col-md-6">
+        <hr>
+        <div class="col-md-6 inv-form">
             <h2>Ingredients:</h2>
             <form action="/add-ingredients" method="POST" class="form-horizontal" id="ingForm">
-                <!-- Form group is used for Bootstrap -->
-                <div class="form-group">
-                    
+                <div class="form-group">        
                     <div class="col-xs-4">
                         <input type="text" class="form-control" name="ingredient" placeholder="Ingredient" />
                     </div>
@@ -63,32 +61,37 @@
                         </button>
                     </div>
                 </div>
-                <input type="submit" class="btn btn-primary">
+                <input type="submit" class="btn btn-primary" value="Add Ingredients">
             </form><br>
         </div>
 
         <div id="ingredients" class="col-md-6 box">
             <div>
                 <h2>Current Ingredients:</h2>
-                    {% if avail_ing %}
-                        {% for ingredient in avail_ing %}
-                            {% if ingredient["unit"] == "none" %}
-                                {{ ingredient["name"] }} {{ ingredient["amount"] }}<br>
-                            {% else %}
-                                {{ ingredient["name"] }} {{ ingredient["amount"] }} {{ ingredient["unit"] }}<br>
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        You have no ingredients at the moment.<br>
-                    {% endif %}
+                    <ul style="font-size: 12pt">
+                        {% if avail_ing %}
+                            {% for ingredient in avail_ing %}
+                                {% if ingredient["unit"] == "none" %}
+                                    <i class="fa fa-square-o" aria-hidden="true" style="font-size: x-small"></i>  {{ ingredient["name"] }} {{ ingredient["amount"] }}<br>
+                                {% else %}
+                                   <i class="fa fa-square-o" aria-hidden="true" style="font-size: x-small"></i>  {{ ingredient["name"] }} {{ ingredient["amount"] }} {{ ingredient["unit"] }}<br>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            You have no ingredients at the moment.<br>
+                        {% endif %}
+                    <ul>
             </div>
             <div>
                 {% if depleted_ing %}
                 <h2>Ingredients You Need to Buy:</h2>
+                    <ul style="font-size: 12pt">
                         {% for ingredient in depleted_ing %}
-                            {{ ingredient[0] }}<br>
+                            <i class="fa fa-square-o" aria-hidden="true" style="font-size: x-small"></i>  {{ ingredient[0] }}
                         {% endfor %}
+                    </ul>
                 {% endif %}
+            </div>
         </div>
     </div>
 

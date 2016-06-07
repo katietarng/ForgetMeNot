@@ -9,7 +9,7 @@
 
 <div class="container-fluid">
     <h1>{{ title }}</h1>
-
+        <hr class="hr-recipes">
         {% if recipes %} 
             {% for recipe in recipes %}
                 <div class="recipe box align-center" id="{{ recipe['recipe_id']}}">
@@ -26,7 +26,8 @@
                             </div>
                             <div class="modal-body">
                                 <div class="modal-image recipe-image"></div>
-                                <div class="description"></div>
+                                <div class="cooktime"></div>
+                                <div class="matched-ing"></div>
                             </div>
                             <div class="modal-footer">
                                 {% if not recipe['bookmarked']%}

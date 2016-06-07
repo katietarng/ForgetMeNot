@@ -1,25 +1,29 @@
 {% extends 'base.html' %}
 {% block title %}ForgetMeNot{% endblock%}
+{% set active_page = 'homepage' %}
 {% block content %}
     <div class="authentication">
         <div class="jumbotron" id="jumb-box">
-            <div class="authentication-box">
-                <h3 class="login-labels">Login</h3>
+            <div class="authentication-box" style="font-family: 'Oxygen', sans-serif">
+                <h3 style="font-weight: 500">Login</h3>
                 <form action="/login" method="POST">
-                    <div id="email">
-                        <label class="login-labels">Email:
-                            <input type="email" name="email" required>
-                        </label>
-                    </div>
-                    <div id="password">
-                        <label class="login-labels">Password:
-                            <input type="password" name="password" required>
-                        </label>
-                    </div>
-                    <div id="login">
-                        <input type="submit" class="btn btn-default" value="Log In">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-xs-offset-3">
+                                <input type="email" class="form-control" name="email" placeholder="E-mail" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-xs-offset-3">
+                                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" class="auth btn btn-default" value="Log In">
+                        </div>
                     </div>
                 </form>
+                <br>
                 <h4><a href="/register" id="register">Get Started</a></h4>
             </div>
         </div>

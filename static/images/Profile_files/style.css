@@ -1,0 +1,110 @@
+.box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.2) 5px 5px 10px 0px;
+}
+
+html,body {
+   margin:0;
+   padding:0;
+   height:100%;
+}
+
+label {
+    display: block;
+}
+
+input, select {
+    color: black;
+}
+
+#wrapper {
+    height: 100%;
+}
+
+/* NAVBAR */
+.navbar-default {
+    background-color: #ECECE7;
+    margin-bottom: auto;
+}
+
+#brand {
+    font-family: 'Lobster', cursive;
+    font-size: 30px;
+    text-align: left;
+    color: #89B9C3;
+}
+
+/*HOMEPAGE AND REGISTRATION*/
+.authentication {
+    background-image: url('/static/images/homepage3.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    height: 590px;
+}
+
+.authentication-box {
+    width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    color: white;
+    vertical-align: middle;
+    -webkit-font-smoothing: antialiased;
+}
+
+#jumb-box {
+    background-color: transparent;
+    color: white;
+    padding-top:150px;
+}
+
+.auth {
+    background-color: transparent;
+    color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+.auth:hover {
+    text-decoration: underline;
+}
+
+#register { 
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    background-color: #89B9C3;
+    opacity: 0.9;
+}
+
+.row {
+    margin-bottom: 5px
+}
+
+/* FOOTER */
+.footer {
+    height: 60px;
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    background-color: #ECECE7;
+}
+
+#footer-content {
+    text-align: center;
+}
+
+#about {
+    color: #89B9C3;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+}   
+
+

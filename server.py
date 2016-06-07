@@ -16,7 +16,6 @@ bcrypt = Bcrypt(app)
 
 app.secret_key = os.environ['APP_KEY']
 
-# Raises an error if there is an undefined variable
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -126,7 +125,6 @@ def show_user_profile(username):
 @app.route('/add-ingredients', methods=["POST"])
 def add_new_ingredients():
     """Add new ingredients to database."""
-    #Get user ID to query the users table - need the user object to get the username attribute
     user_id = session.get('user_id', None)
     user = User.query.get(user_id)
     ingredients = request.form.getlist("ingredient", None)[:-1]  # Slice up to second to last item because of hidden form template
@@ -232,7 +230,7 @@ def return_recipe_details():
 
 
 if __name__ == "__main__":
-    app.debug = True
+    app.debug = False
 
     connect_to_db(app)
 

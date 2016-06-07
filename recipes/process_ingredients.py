@@ -114,7 +114,6 @@ def add_ingredients(ingredients, amounts, units, user_id):
 def update_ingredient_amount(user_id, name, unit, amount):
     """Update new ingredient amount after ingredient has been used."""
 
-    print name
     ingredient = Ingredient.query.filter_by(name=name, user_id=user_id).first()
     db_ing_unit = ingredient.unit
 

@@ -1,13 +1,20 @@
+
+#load {
+    margin-top: 15px;
+    margin-bottom: 10px
+}
+
+.hr-recipes {
+    margin-top: 10px;
+    margin-bottom: 17px;
+}
+
 .recipe {
     display:none;
     margin-right: 10px;
     margin-bottom: 20px;
     width: 442px;
     vertical-align: top;
-}
-
-#load {
-    margin-top: 20px;
 }
 
 .recipe-image {
@@ -18,9 +25,23 @@
     background-position: 50% 50%;
 }
 
+.ing-label {
+    font-size: 13pt;
+}
+
+.cooktime {
+    float: right;
+}
+
+.modal-title {
+    font-size: 20pt;
+    font-weight: 700;
+}
+
 .modal-image {
     width: 100%;
     height: 400px;
+    margin-bottom: 5px;
 }
 
 .modal-body {
@@ -35,5 +56,9 @@
     padding-top: 15px;
 }
 
-
+.cook {
+    background-color: #6F8CA5;
+    border-color: #6F8CA5;
+    color: white;
+}
 

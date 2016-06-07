@@ -1,54 +1,48 @@
 {% extends 'base.html' %}
+{% set active_page = 'homepage' %}
 {% block content %}
 <div class="authentication">
-    <div class="authentication-box">
-        <h1>Register</h1>
-        <form action="/register" method="POST">
-            <div>
-                <label>
-                    Username:
-                    <input type="text" name="username">
-                </label>
-            </div>
-
-            <div>
-                <label>
-                    Email:
-                    <input type="email" name="email">
-                </label>
-            </div>
-
-            <div>
-                <label>
-                    Password:
-                    <input type="password" name="password">
-                </label>
-            </div>
-
-            <div>
-                <label>
-                    First Name:
-                    <input type="text" name="fname">
-                </label>
-            </div>
-
-            <div>
-                <label>
-                    Last Name:
-                    <input type="text" name="lname">
-                </label>
-            </div>
-
-            <div>
-                <label>
-                    Phone Number:
-                    <input type="text" name="phone">
-                </label>
-            </div>
-
-            <div>
-                <input type="submit" value="Register">
-            </div>
+    <div class="jumbotron" id="jumb-box">
+        <div class="authentication-box" style="font-family: 'Oxygen', sans-serif;">
+            <h3 style="font-weight: 500">Register</h3>
+            <form action="/register" method="POST">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-offset-3">
+                            <input type="text" class="form-control" name="username" placeholder="Username" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-offset-3">
+                            <input type="email" class="form-control" name="email" placeholder="E-mail" required />
+                        </div >
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-offset-3">
+                            <input type="password" class="form-control" name="password" placeholder="Password" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-offset-3">
+                            <input type="text" class="form-control" name="fname" placeholder="First Name" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-offset-3">
+                            <input type="text" class="form-control" name="lname" placeholder="Last Name" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-offset-3">
+                            <input type="text" class="form-control" name="phone" placeholder="Phone Number" required />
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        <input type="submit" class="auth btn btn-default" value="Register">
+                    </div>
+                </div>
+        </div>
     </div>
 </div>
 {% endblock %}

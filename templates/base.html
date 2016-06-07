@@ -2,10 +2,12 @@
 <html>
 <head>
     <title>{% block title %}{% endblock%}</title>
+    <link rel="icon" href="/static/images/app-logo.png" type="image/gif" sizes="14x14"> 
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
-    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Lobster|Actor|Oxygen' rel='stylesheet' type='text/css'>
     <script src="http://code.jquery.com/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
@@ -13,31 +15,41 @@
 </head>
 
 <!-- BODY -->
-<body>
-    {% include 'navbarbase.html' %}
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                {% if category == 'success' %}
-                    <div>
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        <div class="alert alert-success">
-                            {{ message }}
-                        </div>
-                    </div>
-                {% else %}
-                    <div>
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                        {{ message }}
-                        <div class="alert alert-danger">
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    {% endwith %}    
-    {% block content %}{% endblock %}
-</body>
+<body class="{{ active_page }}">
 
+    <div class="wrapper">
+        <div class="header">
+            {% include 'navbarbase.html' %}
+        </div>
+        <div class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'success' %}
+                            <div class="col-xs-12">
+                                <div class="alert alert-success">{{ message }}</div>
+                            </div>
+                        {% else %}
+                            <div class="col-xs-12">
+                                <div class="alert alert-danger">{{ message }}</div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </div>
+        <div class="push"></div>
+    </div>
+    <div class="footer">
+        <div id="footer-content">
+            <h5 id="about" style="margin-top: auto">About ForgetMeNot</h5>
+            <a href="https://github.com/katietarng/ForgetMeNot"><img class="icon" src="/static/images/github.png"></a>
+            <a href="http://www.linkedin.com/in/katietarng"><img class="icon" src="/static/images/linkedin.png"></a>
+            <a href="http://www.twitter.com/katiecodes23"><img class="icon" src="/static/images/twitter.png"></a>
+        </div>
+    </div>
+</body>
 
 </html>

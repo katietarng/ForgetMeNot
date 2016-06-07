@@ -12,13 +12,15 @@ function showDetails(e) {
     $.get("/recipe-details.json",
         details,
         function (result) {
-            var recipeHtml = '<b>Cook Time:</b> ' + result.info.cooktime +
-                             ' minutes' + '<br><b>Matched Ingredients:</b> ' +
+            var cooktimeHtml = '<b class="ing-label">Cook Time:</b> ' + result.info.cooktime +
+                             ' minutes';
+            var ingHtml = '<b class="ing-label">Matched Ingredients:</b> ' +
                              '<br>';
 
             $("#modal-" + result.id).find(".modal-title").html(result.title);
             $("#modal-" + result.id).find(".modal-body .modal-image").css("background-image", "url('" + result.image + "')");
-            $("#modal-" + result.id).find(".modal-body .description").html(recipeHtml);
+            $("#modal-" + result.id).find(".modal-body .cooktime").html(cooktimeHtml);
+            $("#modal-" + result.id).find(".modal-body .matched-ing").html(ingHtml);
 
             $("#modal-" + result.id).find(".cook").attr("data-source", result.info.source);
             $("#modal-" + result.id).find(".cook").attr("data-ing", result.info.ingredients);
@@ -30,8 +32,8 @@ function showDetails(e) {
             
             var ingredients = (JSON.parse(result.info.ingredients)).used_ings;
                               $.each(ingredients, function (key, value) {
-                                $("#modal-" + result.id).find(".modal-body .description")
-                                .append('<li> ' + value.name + ' ' + (value.amount).toFixed(1) + ' ' + value.unit + '</li>');
+                                $("#modal-" + result.id).find(".modal-body .matched-ing")
+                                .append('<i class="fa fa-square-o" aria-hidden="true" style="font-size: x-small"></i>  ' + value.name + ' ' + (value.amount).toFixed(1) + ' ' + value.unit + '<br>');
                             });
 
             $('#modal-' + result.id).modal();

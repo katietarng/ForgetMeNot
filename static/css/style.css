@@ -1,3 +1,29 @@
+/*GENERAL*/
+
+html,body {
+   margin:0;
+   padding:0;
+   height:100%;
+   font-family: 'Actor', sans-serif;
+   color: #545454;
+}
+
+body.homepage {
+    background-image: url('/static/images/homepage3.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+}
+
+label {
+    display: block;
+}
+
+input, select {
+    color: black;
+}
+
 .box {
     border: 1px solid #ddd;
     padding: 20px;
@@ -5,66 +31,146 @@
     box-shadow: rgba(0, 0, 0, 0.2) 5px 5px 10px 0px;
 }
 
-body {
-    padding-bottom: 200px;
+
+.wrapper {
+    min-height: 100%;
+    margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
 }
 
-input, select {
-    color: black;
+
+/*PROFILE*/
+.btn-primary {
+    background-color: #6F8CA5;
+    border-color: #6F8CA5;
 }
 
-#email {
-    position: relative;
-    right: 12px;
+.btn-primary:hover {
+    opacity: 0.5;
 }
 
-#password {
-    position: relative;
-    right: 27px;
-}
-
-#register {
-    position: relative;
-    right: 3px;
-}
-
-.authentication {
-    background-image: url('/static/images/homepage.jpg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-
-.authentication-box {
-    width: 500px;
-    margin: 0 auto;
-    background-color: transparent;
-    text-align: center;
-    color: white;
-    vertical-align: middle;
-    -webkit-font-smoothing: antialiased;
-}
-
-#jumb-box{
-    background-color: transparent;
-    color: white;
-    padding-top:150px;
-}
 
 /* NAVBAR */
-#navbar {
-    color: #D1DBBD;
+.navbar-default {
+    background-color: #ECECE7;
     margin-bottom: auto;
+}
+
+.navbar-nav>li>a {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 
 #brand {
     font-family: 'Lobster', cursive;
     font-size: 30px;
     text-align: left;
-    color: #66CCFF;
+    color: #89B9C3;
+    padding-top: 17px;
 }
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: #89B9C3;
+}
+
+.navbar-default .navbar-nav > .active > a {
+    background-color: transparent;
+    color: #89B9C3;
+    border-bottom: 5px solid #89B9C3;
+}
+
+.navbar-default .navbar-nav > .active > a:hover {
+    background-color: transparent;
+    color: #89B9C3;
+}
+
+.navbar-default .navbar-nav > .open > a {
+    background-color: transparent;
+    color: #89B9C3;
+}
+
+.profile-image {
+    height: 35px;
+    width: 35px;
+    border-radius: 10px;
+}
+
+.dropdown-menu>li>a:hover {
+    color: #89B9C3;
+    background-color: transparent;
+}
+
+
+/*HOMEPAGE AND REGISTRATION*/
+
+.authentication-box {
+    width: 500px;
+    margin: 0 auto;
+    text-align: center;
+    color: white;
+    vertical-align: middle;
+    -webkit-font-smoothing: antialiased;
+}
+
+#jumb-box {
+    background-color: transparent;
+    color: white;
+    padding-top:150px;
+    padding-bottom: 0;
+}
+
+.auth {
+    background-color: transparent;
+    color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-weight: bolder;
+}
+
+.auth:hover {
+    text-decoration: underline;
+}
+
+#register { 
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    background-color: #89B9C3;
+    opacity: 0.9;
+}
+
+.row {
+    margin-bottom: 5px
+}
+
+/* FOOTER */
+.footer, .push {
+    height: 60px; /* '.push' must be the same height as 'footer' */
+}
+
+.footer {
+    height: 60px;
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    background-color: #ECECE7;
+}
+
+#footer-content {
+    text-align: center;
+}
+
+#about {
+    font-family: 'Lobster', cursive;
+    font-size: 15pt;
+    margin-bottom: 5px;
+    color: #89B9C3;
+    padding-top: 1px;
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+}   
 
 
