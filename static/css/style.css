@@ -66,28 +66,28 @@ input, select {
     font-family: 'Lobster', cursive;
     font-size: 30px;
     text-align: left;
-    color: #89B9C3;
+    color: #7AB8C5;
     padding-top: 17px;
 }
 
 .navbar-default .navbar-nav > li > a:hover {
-    color: #89B9C3;
+    color: #7AB8C5;
 }
 
 .navbar-default .navbar-nav > .active > a {
     background-color: transparent;
-    color: #89B9C3;
-    border-bottom: 5px solid #89B9C3;
+    color: #7AB8C5;
+    border-bottom: 5px solid #7AB8C5;
 }
 
 .navbar-default .navbar-nav > .active > a:hover {
     background-color: transparent;
-    color: #89B9C3;
+    color: #7AB8C5;
 }
 
 .navbar-default .navbar-nav > .open > a {
     background-color: transparent;
-    color: #89B9C3;
+    color: #7AB8C5;
 }
 
 .profile-image {
@@ -97,7 +97,7 @@ input, select {
 }
 
 .dropdown-menu>li>a:hover {
-    color: #89B9C3;
+    color: #7AB8C5;
     background-color: transparent;
 }
 
@@ -142,7 +142,7 @@ input, select {
     border-radius: 10px;
     padding: 10px;
     color: white;
-    background-color: #89B9C3;
+    background-color: #7AB8C5;
     opacity: 0.9;
 }
 
@@ -172,13 +172,14 @@ input, select {
     font-family: 'Lobster', cursive;
     font-size: 15pt;
     margin-bottom: 5px;
-    color: #89B9C3;
+    color: #7AB8C5;
     padding-top: 1px;
 }
 
 .icon {
     width: 30px;
     height: 30px;
+    border-radius: 5px;
 }   
 
 

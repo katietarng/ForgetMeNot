@@ -231,7 +231,7 @@ def return_recipe_details():
 
 if __name__ == "__main__":
     app.debug = False
-
+    
     connect_to_db(app)
 
     DebugToolbarExtension(app)
