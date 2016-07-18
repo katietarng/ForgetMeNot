@@ -44,8 +44,6 @@ Users can view a list of suggested recipes based on the ingredients in their pro
 
 ####Bookmarked and Cooked Recipes
 
-![Bookmarked Recipes](/static/images/Readme/screenshot-bookmark.png)
------------------
 ![Bookmarked Recipes](/static/images/Readme/screenshot-bookmark-cook.png)
 
 When a user chooses to bookmark or a cook a recipe, the recipe is saved to the local database and filtered out of the suggested recipe API response. The user can then access their bookmarks and cooked recipes through the navigation bar if they want to view the recipes they've cooked or bookmarked. Note that the user is able to re-cook a recipe again.
