@@ -58,6 +58,7 @@ class ProcessRecipes(TestCase):
         # process_recipes.recipe_info = self._old_recipe_info
 
     def test_return_suggested_recipes(self):
+
         INGREDIENTS = "apple,flour,sugar"
         USER_ID = 1
 
@@ -73,6 +74,7 @@ class ProcessRecipes(TestCase):
 class Process_Ingredients(TestCase):
 
     def test_return_singular_form(self):
+
         INGREDIENTS = [{"name": "apples", "amount": 5, "unit": ""},
                        {"name": "sugar", "amount": 4, "unit": "cups"}]
 
@@ -102,8 +104,6 @@ class FlaskTestsLoggedIn(TestCase):
         result = self.client.get("/")
         self.assertIn("Current Ingredients", result.data)
         self.assertNotIn("Login", result.data)
-
-
 
 
 

@@ -33,6 +33,10 @@
     float: right;
 }
 
+.missed-ing {
+    float: center;
+}
+
 .modal-title {
     font-size: 20pt;
     font-weight: 700;

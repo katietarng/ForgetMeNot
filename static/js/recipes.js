@@ -4,7 +4,8 @@ function showDetails(e) {
 
     var details = {
         "api_id": $(this).parent().attr("id"),
-        "ingredients": $(this).siblings(".ingredients").html(),
+        "used_ingredients": $(this).siblings("#used-ings").html(),
+        "missed_ingredients": $(this).siblings("#missed-ings").html(),
         "image": $(this).data("image"),
         "title": $(this).data("title")
     };
@@ -14,13 +15,16 @@ function showDetails(e) {
         function (result) {
             var cooktimeHtml = '<b class="ing-label">Cook Time:</b> ' + result.info.cooktime +
                              ' minutes';
-            var ingHtml = '<b class="ing-label">Matched Ingredients:</b> ' +
+            var usedingHtml = '<b class="ing-label">Matched Ingredients:</b> ' +
+                             '<br>';
+            var missingHtml = '<b class="ing-label">Missing Ingredients:</b> ' +
                              '<br>';
 
             $("#modal-" + result.id).find(".modal-title").html(result.title);
             $("#modal-" + result.id).find(".modal-body .modal-image").css("background-image", "url('" + result.image + "')");
             $("#modal-" + result.id).find(".modal-body .cooktime").html(cooktimeHtml);
-            $("#modal-" + result.id).find(".modal-body .matched-ing").html(ingHtml);
+            $("#modal-" + result.id).find(".modal-body .matched-ing").html(usedingHtml);
+            $("#modal-" + result.id).find(".modal-body .missed-ing").html(missingHtml);
 
             $("#modal-" + result.id).find(".cook").attr("data-source", result.info.source);
             $("#modal-" + result.id).find(".cook").attr("data-ing", result.info.ingredients);
@@ -30,11 +34,17 @@ function showDetails(e) {
             $("#modal-" + result.id).find(".bookmarks").attr("data-source", result.info.source);
             $("#modal-" + result.id).find(".bookmarks").attr("data-image", result.image);
             
-            var ingredients = (JSON.parse(result.info.ingredients)).used_ings;
-                              $.each(ingredients, function (key, value) {
+            var usedIngredients = (JSON.parse(result.info.ingredients)).used_ings;
+                              $.each(usedIngredients, function (key, value) {
                                 $("#modal-" + result.id).find(".modal-body .matched-ing")
                                 .append('<i class="fa fa-square-o" aria-hidden="true" style="font-size: x-small"></i>  ' + value.name + ' ' + (value.amount).toFixed(1) + ' ' + value.unit + '<br>');
                             });
+            console.log(usedIngredients)
+            var missedIngredients = result.missed.missed_ings;
+                              $.each(missedIngredients, function(key, value) {
+                                $("#modal-" + result.id). find(".modal-body .missed-ing")
+                                .append('<i class="fa fa-square-o" aria-hidden="true" style="font-size: x-small"></i>  ' + value + '<br>');
+                              });
 
             $('#modal-' + result.id).modal();
         }

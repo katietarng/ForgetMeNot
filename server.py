@@ -212,25 +212,27 @@ def add_used_recipe():
 def return_recipe_details():
 
     recipe_id = request.args.get("api_id", None)
-    ingredients = json.loads(request.args.get("ingredients", None))
+    used_ingredients = json.loads(request.args.get("used_ingredients", None))
+    missed_ingredients = json.loads(request.args.get("missed_ingredients", None))
     title = request.args.get("title", None)
     image = request.args.get("image", None)
 
-    if isinstance(ingredients["used_ings"][0], unicode):
-        info = recipe_info(recipe_id, ingredients["used_ings"])
+    if isinstance(used_ingredients["used_ings"][0], unicode):
+        info = recipe_info(recipe_id, used_ingredients["used_ings"])
 
-    if isinstance(ingredients["used_ings"][0], dict):
+    if isinstance(used_ingredients["used_ings"][0], dict):
         info = recipe_info(recipe_id)
         info["ingredients"] = json.dumps(ingredients)
 
     return jsonify(info=info,
+                   missed=missed_ingredients,
                    id=recipe_id,
                    image=image,
                    title=title)
 
 
 if __name__ == "__main__":
-    app.debug = False
+    app.debug = True
     
     connect_to_db(app)
 

@@ -15,7 +15,8 @@
                 <div class="recipe box align-center" id="{{ recipe['recipe_id']}}">
                     <div class="recipe-image" style="background-image: url('{{ recipe['image'] }}');"></div>
                     <h4 class="recipename">{{ recipe['title'] }}</h4>
-                    <span class="ingredients" hidden>{{ recipe['ingredients'] }}</span>
+                    <span class="ingredients" id="used-ings" hidden>{{ recipe['used_ingredients'] }}</span>
+                    <span class="ingredients" id="missed-ings" hidden>{{ recipe['missed_ingredients'] }}</span>
                     <button class="btn btn-default details" data-image="{{ recipe['image'] }}" data-title="{{ recipe['title'] }}">See Details</button>
                     <div id="modal-{{ recipe['recipe_id'] }}" class="modal fade" role="dialog">
                       <div class="modal-dialog">
@@ -28,12 +29,13 @@
                                 <div class="modal-image recipe-image"></div>
                                 <div class="cooktime"></div>
                                 <div class="matched-ing"></div>
+                                <div class="missed-ing"></div>
                             </div>
                             <div class="modal-footer">
                                 {% if not recipe['bookmarked']%}
-                                    <button type="button" class="btn btn-default bookmarks" data-source="#" data-ing="#" data-image="#">Bookmark</button>
+                                    <button type="button" class="btn btn-default bookmarks" data-source="#" data-used-ing="#" data-miss-ing="#" data-image="#">Bookmark</button>
                                 {% endif %}
-                                <button type="button" class="btn btn-default cook" data-source="#" data-ing="#", data-image="#">Cook</button>
+                                <button type="button" class="btn btn-default cook" data-source="#" data-ing="#" data-miss-ing="#" data-image="#">Cook</button>
                             </div>
                         </div>
                       </div>

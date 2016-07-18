@@ -172,14 +172,18 @@ def return_suggested_recipes(responses, user_id):
         recipe = {}
 
         used_ingredients = response.get("usedIngredients")
+        missed_ingredients = response.get("missedIngredients")
+
         used_ingredients = [ingredient["name"] for ingredient in used_ingredients]
+        missed_ingredients = [ingredient["name"] for ingredient in missed_ingredients]
 
         recipe["recipe_id"] = response['id']
         recipe["image"] = response['image']
         recipe["title"] = response['title']
         recipe["bookmarked"] = False
-        recipe["ingredients"] = json.dumps({"used_ings": used_ingredients})
-
+        recipe["used_ingredients"] = json.dumps({"used_ings": used_ingredients})
+        recipe["missed_ingredients"] = json.dumps({"missed_ings": missed_ingredients})
+    
         # Check if a recipe has been cooked or bookmarked before
         stored_id = Recipe.query.filter_by(user_id=user_id, recipe_id=response['id']).first()
 
